@@ -9,7 +9,7 @@ app.use(express.json());
 
 
 // Connect MongoDB
-mongoose.connect("mongodb://127.0.0.1:27017/agriAdvisorDB")
+mongoose.connect("mongodb+srv://Farmer:farmer123@cluster.qqiplhm.mongodb.net/")
 .then(() => console.log("MongoDB Connected"))
 .catch(err => console.log(err));
 
