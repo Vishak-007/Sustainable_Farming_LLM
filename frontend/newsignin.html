@@ -185,7 +185,14 @@ select:valid{
         <option>Acres</option>
         <option>Cents</option>
     </select>
-    <input type="text" placeholder="Soil Type" id="soilType" required>
+    <select required id="gender">
+        <option value="" disabled selected>Soil Type</option>
+        <option>Alluvial Soil</option>
+        <option>Red Soil</option>
+        <option>Black Soil</option>
+        <option>Laterite Soil</option>
+        <option >Sandy Soil</option>
+    </select>
 </div>
 
 <div class="form-step">
@@ -354,7 +361,7 @@ async function submitForm() {
             steps[3].innerHTML = "✔";
             progress.style.width = "100%";
 
-            window.location.href = "dashboard.html";
+            window.location.href = "maindashboard.html";
         } else {
             alert("Error saving data. Mobile number might already exist.");
         }
