@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Farm Details — Smart Farmer</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .farm-hero {
+      background: linear-gradient(135deg, #1e3a24 0%, #2d7a3a 100%);
+      border-radius: var(--r); padding: 22px 26px; color: #fff;
+      margin-bottom: 18px; display: flex; align-items: center; gap: 18px;
+      position: relative; overflow: hidden;
+    }
+    .farm-hero::after { content:'🌾'; position:absolute; right:20px; bottom:-10px; font-size:6rem; opacity:.1; pointer-events:none; }
+    .fh-icon { font-size: 2.8rem; }
+    .fh-info h2 { font-family: 'Lora', serif; font-size: 1.5rem; margin-bottom: 4px; }
+    .fh-info p  { opacity: .75; font-size: .85rem; }
+    .fh-badges  { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .fh-badge   { background: rgba(255,255,255,.15); padding: 4px 12px; border-radius: 99px; font-size: .72rem; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div id="sidebar-mount"></div>
+  <main class="main">
+    <div id="topbar-mount"></div>
+    <div class="page-content">
+
+      <!-- Hero Banner -->
+      <div class="farm-hero fade-in">
+        <div class="fh-icon">🌾</div>
+        <div class="fh-info">
+          <h2 id="fh-name">My Farm</h2>
+          <p id="fh-sub">Loading farm details…</p>
+          <div class="fh-badges">
+            <span class="fh-badge" id="fh-crop">—</span>
+            <span class="fh-badge" id="fh-land">—</span>
+            <span class="fh-badge" id="fh-state">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Location + Land -->
+      <div class="grid-2" style="margin-bottom:16px;">
+        <div class="card fade-in">
+          <div class="card-title">📍 Location</div>
+          <div class="info-grid">
+            <div class="info-item"><div class="ii-label">Country</div><div class="ii-value" id="fi-country">India</div></div>
+            <div class="info-item"><div class="ii-label">State</div><div class="ii-value" id="fi-state">—</div></div>
+            <div class="info-item"><div class="ii-label">District</div><div class="ii-value" id="fi-district">—</div></div>
+            <div class="info-item"><div class="ii-label">Water Source</div><div class="ii-value" id="fi-water">—</div></div>
+          </div>
+        </div>
+        <div class="card fade-in">
+          <div class="card-title">🗺️ Land Information</div>
+          <div class="info-grid">
+            <div class="info-item"><div class="ii-label">Land Size</div><div class="ii-value" id="fi-land">—</div></div>
+            <div class="info-item"><div class="ii-label">Soil Type</div><div class="ii-value" id="fi-soil">—</div></div>
+            <div class="info-item"><div class="ii-label">Main Crop</div><div class="ii-value" id="fi-crop">—</div></div>
+            <div class="info-item"><div class="ii-label">Current Season</div><div class="ii-value">Kharif</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Soil Health + Livestock -->
+      <div class="grid-2" style="margin-bottom:16px;">
+        <div class="card fade-in">
+          <div class="card-title">🧪 Soil Health Profile</div>
+          <div class="soil-bars" id="soil-bars">
+            <div class="spinner-wrap"><div class="spinner"></div></div>
+          </div>
+        </div>
+        <div class="card fade-in">
+          <div class="card-title">🐄 Livestock</div>
+          <div class="livestock-cards">
+            <div class="livestock-card"><div class="lc-icon">🐄</div><div class="lc-count" id="lc-cows">0</div><div class="lc-label">Cows</div></div>
+            <div class="livestock-card"><div class="lc-icon">🐐</div><div class="lc-count" id="lc-goats">0</div><div class="lc-label">Goats</div></div>
+            <div class="livestock-card"><div class="lc-icon">🐔</div><div class="lc-count" id="lc-hens">0</div><div class="lc-label">Hens</div></div>
+          </div>
+          <div class="alert alert-success" style="margin-top:14px;">🌿 Use animal manure as fertilizer — saves 30–40% input cost.</div>
+        </div>
+      </div>
+
+      <!-- Fertilizer & Subsidies -->
+      <div class="card fade-in">
+        <div class="card-title">🧴 Fertilizer, Pesticide & Subsidies</div>
+        <ul class="dlist">
+          <li><span class="dk">Fertilizer Used</span><span class="dv" id="fi-fert">Not specified</span></li>
+          <li><span class="dk">Pesticide Used</span><span class="dv" id="fi-pest">Not specified</span></li>
+          <li><span class="dk">Government Subsidy</span><span class="dv" id="fi-sub">None</span></li>
+          <li><span class="dk">Additional Business</span><span class="dv" id="fi-biz">None</span></li>
+        </ul>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="shared.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    initPage('farm');
+    const { farmer } = await loadFarmerData();
+    updateSidebarFarmer(farmer);
+
+    const s = (id, v) => { const el=document.getElementById(id); if(el) el.textContent = v||'—'; };
+
+    document.getElementById('fh-name').textContent  = `${farmer.firstName || 'My'} Farm`;
+    document.getElementById('fh-sub').textContent   = `${[farmer.district, farmer.state].filter(Boolean).join(', ') || 'India'} · ${farmer.landSize} ${farmer.landUnit}`;
+    document.getElementById('fh-crop').textContent  = farmer.regularCrop || '—';
+    document.getElementById('fh-land').textContent  = `${farmer.landSize} ${farmer.landUnit}`;
+    document.getElementById('fh-state').textContent = farmer.state || 'India';
+
+    s('fi-country',  farmer.country || 'India');
+    s('fi-state',    farmer.state);
+    s('fi-district', farmer.district);
+    s('fi-water',    WATER_LABELS[farmer.waterSource] || farmer.waterSource);
+    s('fi-land',     `${farmer.landSize} ${farmer.landUnit}`);
+    s('fi-soil',     farmer.soilType);
+    s('fi-crop',     farmer.regularCrop);
+    s('fi-fert',     farmer.fertilizerUsed);
+    s('fi-pest',     farmer.pesticideUsed);
+    s('fi-sub',      farmer.govSubsidy);
+    s('fi-biz',      farmer.additionalBusiness);
+
+    s('lc-cows',  farmer.cows  || 0);
+    s('lc-goats', farmer.goats || 0);
+    s('lc-hens',  farmer.hens  || 0);
+
+    document.getElementById('soil-bars').innerHTML = renderSoilBars(farmer.soilType);
+  });
+  </script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Market Prices — Smart Farmer</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .market-hero {
+      background: linear-gradient(135deg, #1e3a24 0%, #2d7a3a 100%);
+      border-radius: var(--r); padding: 20px 26px; color: #fff;
+      margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+    }
+    .market-hero h2 { font-family: 'Lora', serif; font-size: 1.3rem; margin-bottom: 4px; }
+    .market-hero p  { opacity: .7; font-size: .82rem; }
+    .mh-stats { display: flex; gap: 22px; }
+    .mh-stat  { text-align: center; }
+    .mh-stat-val { font-size: 1.5rem; font-weight: 900; }
+    .mh-stat-lbl { font-size: .7rem; opacity: .7; }
+  </style>
+</head>
+<body>
+  <div id="sidebar-mount"></div>
+  <main class="main">
+    <div id="topbar-mount"></div>
+    <div class="page-content">
+
+      <!-- Hero -->
+      <div class="market-hero fade-in">
+        <div>
+          <h2>📊 Market Prices</h2>
+          <p>Live mandi rates & price trends for your crops</p>
+        </div>
+        <div class="mh-stats">
+          <div class="mh-stat"><div class="mh-stat-val" id="mk-total">12</div><div class="mh-stat-lbl">Tracked Crops</div></div>
+          <div class="mh-stat"><div class="mh-stat-val" id="mk-rising">—</div><div class="mh-stat-lbl">Rising Today</div></div>
+          <div class="mh-stat"><div class="mh-stat-val" id="mk-falling">—</div><div class="mh-stat-lbl">Falling Today</div></div>
+        </div>
+      </div>
+
+      <!-- Top Stats -->
+      <div class="stats-row" style="margin-bottom:18px;">
+        <div class="stat-card fade-in"><div class="stat-icon si-green">🌾</div><div><div class="stat-val" id="mk-your-price">₹2,350</div><div class="stat-lbl" id="mk-your-label">Your Crop</div><div class="stat-trend trend-up" id="mk-your-trend">↑ 3.2% today</div></div></div>
+        <div class="stat-card fade-in"><div class="stat-icon si-amber">🌽</div><div><div class="stat-val">₹2,240</div><div class="stat-lbl">Maize</div><div class="stat-trend trend-up">↑ 2.1%</div></div></div>
+        <div class="stat-card fade-in"><div class="stat-icon si-blue">🌿</div><div><div class="stat-val">₹5,100</div><div class="stat-lbl">Soybean</div><div class="stat-trend trend-up">↑ 3.8%</div></div></div>
+        <div class="stat-card fade-in"><div class="stat-icon si-red">🧅</div><div><div class="stat-val">₹1,800</div><div class="stat-lbl">Onion</div><div class="stat-trend trend-down">↓ 8.1%</div></div></div>
+      </div>
+
+      <!-- Price Table -->
+      <div class="card fade-in" style="margin-bottom:16px;">
+        <div class="card-title">
+          Crop Price Index
+          <span id="mkt-upd" style="font-size:.74rem;font-weight:600;color:var(--text-3);text-transform:none;letter-spacing:0;">Updating…</span>
+        </div>
+        <div class="filter-tabs">
+          <button class="ft active" onclick="filterMkt('all',this)">All Crops</button>
+          <button class="ft" onclick="filterMkt('up',this)">↑ Rising</button>
+          <button class="ft" onclick="filterMkt('down',this)">↓ Falling</button>
+          <button class="ft" onclick="filterMkt('yours',this)">Your Crop</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="price-table">
+            <thead>
+              <tr>
+                <th>Crop</th>
+                <th>Market Price (₹/qtl)</th>
+                <th>MSP (₹/qtl)</th>
+                <th>vs MSP</th>
+                <th>Today's Change</th>
+              </tr>
+            </thead>
+            <tbody id="price-tbody">
+              <tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted);">Loading prices…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Mandi Info -->
+      <div class="card fade-in">
+        <div class="card-title">🏪 Nearby Mandi Information</div>
+        <div class="mandi-grid" id="mandi-grid">
+          <div class="spinner-wrap"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="shared.js"></script>
+  <script>
+  let allPrices = [], mktFilter = 'all', farmerCrop = '';
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    initPage('market');
+    const { farmer } = await loadFarmerData();
+    updateSidebarFarmer(farmer);
+    farmerCrop = farmer.regularCrop || '';
+
+    let prices;
+    try {
+      const res = await API.get('/market-prices');
+      prices = res.prices;
+    } catch {
+      prices = DEMO_PRICES;
+    }
+    allPrices = prices;
+
+    const rising  = prices.filter(p => p.trend === 'up').length;
+    const falling = prices.filter(p => p.trend === 'down').length;
+    document.getElementById('mk-total').textContent   = prices.length;
+    document.getElementById('mk-rising').textContent  = rising;
+    document.getElementById('mk-falling').textContent = falling;
+
+    const yours = prices.find(p => p.crop.toLowerCase() === farmerCrop.toLowerCase());
+    if (yours) {
+      document.getElementById('mk-your-price').textContent = '₹' + yours.market.toLocaleString('en-IN');
+      document.getElementById('mk-your-label').textContent = farmerCrop + ' (Your Crop)';
+      document.getElementById('mk-your-trend').textContent = (yours.trend==='up'?'↑':'↓') + ' ' + Math.abs(yours.change) + '% today';
+      document.getElementById('mk-your-trend').className = 'stat-trend ' + (yours.trend==='up'?'trend-up':'trend-down');
+    }
+
+    document.getElementById('mkt-upd').textContent = 'Updated: ' + new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+    renderTable();
+    renderMandis();
+  });
+
+  function renderTable() {
+    let data = allPrices;
+    if (mktFilter === 'up')    data = data.filter(p => p.trend === 'up');
+    if (mktFilter === 'down')  data = data.filter(p => p.trend === 'down');
+    if (mktFilter === 'yours') data = data.filter(p => p.crop.toLowerCase() === farmerCrop.toLowerCase());
+    if (!data.length) {
+      document.getElementById('price-tbody').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted);">No crops match this filter.</td></tr>';
+      return;
+    }
+    document.getElementById('price-tbody').innerHTML = data.map(p => {
+      const mine = p.crop.toLowerCase() === farmerCrop.toLowerCase();
+      const vs = p.msp
+        ? (p.market > p.msp ? `<span class="chip chip-green">+₹${p.market-p.msp} above MSP</span>` : `<span class="chip chip-amber">-₹${p.msp-p.market} below MSP</span>`)
+        : `<span style="color:var(--text-muted)">No MSP</span>`;
+      const badge = p.trend === 'up'
+        ? `<span class="trend-up-badge">▲ ${Math.abs(p.change)}%</span>`
+        : `<span class="trend-down-badge">▼ ${Math.abs(p.change)}%</span>`;
+      return `<tr ${mine?'class="highlight"':''}>
+        <td><strong>${p.crop}</strong>${mine?` <span class="chip chip-green">Your Crop</span>`:''}</td>
+        <td style="font-weight:800;font-size:.9rem;">₹${p.market.toLocaleString('en-IN')}</td>
+        <td>${p.msp?'₹'+p.msp.toLocaleString('en-IN'):'—'}</td>
+        <td>${vs}</td>
+        <td>${badge}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function filterMkt(f, btn) {
+    document.querySelectorAll('.ft').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    mktFilter = f;
+    renderTable();
+  }
+
+  function renderMandis() {
+    const mandis = [
+      { name:'APMC Nashik',      dist:'12 km', open:'6AM–2PM',  days:'Mon–Sat',     fee:'1.5%' },
+      { name:'Lasalgaon Mandi',  dist:'8 km',  open:'7AM–1PM',  days:'Tue,Thu,Sat', fee:'1.5%' },
+      { name:'Vashi APMC',       dist:'45 km', open:'6AM–3PM',  days:'Mon–Fri',     fee:'2%'   },
+      { name:'Pune APMC',        dist:'35 km', open:'5AM–12PM', days:'Daily',       fee:'1%'   },
+    ];
+    document.getElementById('mandi-grid').innerHTML = mandis.map(m => `
+      <div class="mandi-card">
+        <div class="mandi-name">🏪 ${m.name}</div>
+        <div class="mandi-dist">📍 ${m.dist} away</div>
+        <div class="mandi-row"><span>Timing</span><span>${m.open}</span></div>
+        <div class="mandi-row"><span>Open Days</span><span>${m.days}</span></div>
+        <div class="mandi-row"><span>Commission</span><span>${m.fee}</span></div>
+      </div>`).join('');
+  }
+  </script>
+</body>
+</html>

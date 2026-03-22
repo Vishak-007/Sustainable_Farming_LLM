@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dashboard — Smart Farmer</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .overview-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 16px; margin-bottom: 18px; }
+    .donut-wrap { display: flex; align-items: center; gap: 20px; }
+    .donut-legend { display: flex; flex-direction: column; gap: 8px; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: .8rem; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .legend-name { font-weight: 700; color: var(--text); }
+    .legend-val  { color: var(--text-3); font-size: .72rem; margin-top: 1px; }
+
+    .farm-card {
+      background: linear-gradient(135deg, #1e3a24 0%, #2d7a3a 100%);
+      border-radius: var(--r); overflow: hidden; position: relative;
+      min-height: 160px; display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 16px 18px; color: #fff; cursor: pointer;
+    }
+    .farm-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .farm-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(30,58,36,.3) 0%, rgba(30,58,36,.85) 100%); display: flex; align-items: flex-start; justify-content: flex-end; padding: 14px; }
+    .farm-grid-icon { font-size: 3rem; opacity: .25; }
+    .farm-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; position: relative; }
+    .farm-name { font-family: 'Lora', serif; font-size: 1.1rem; font-weight: 700; }
+    .farm-meta { display: flex; gap: 10px; position: relative; flex-wrap: wrap; }
+    .farm-meta-item { background: rgba(255,255,255,.15); border-radius: 8px; padding: 7px 10px; font-size: .72rem; line-height: 1.4; }
+    .farm-meta-item strong { display: block; font-weight: 800; font-size: .85rem; color: #a5f3b4; }
+
+    .g-tab { padding: 4px 12px; border-radius: 99px; font-size: .74rem; font-weight: 700; cursor: pointer; border: 1.5px solid var(--border); background: var(--bg); color: var(--text-3); transition: all var(--t); }
+    .g-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .chart-svg { width: 100%; height: 120px; overflow: visible; }
+
+    .crop-list { display: flex; flex-direction: column; gap: 0; }
+    .crop-item { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-light); }
+    .crop-item:last-child { border-bottom: none; }
+    .crop-thumb { width: 36px; height: 36px; border-radius: 10px; background: var(--primary-50); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .crop-info { flex: 1; min-width: 0; }
+    .crop-name  { font-weight: 800; font-size: .85rem; color: var(--text); }
+    .crop-stage { font-size: .7rem; color: var(--text-3); margin-bottom: 4px; }
+    .crop-pct   { font-size: .75rem; font-weight: 800; }
+
+    .weather-days { display: flex; flex-direction: column; }
+    .weather-day { display: flex; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border-light); gap: 10px; font-size: .82rem; }
+    .weather-day:last-child { border-bottom: none; }
+    .wd-icon { font-size: 1.3rem; width: 26px; text-align: center; flex-shrink: 0; }
+    .wd-day  { font-weight: 700; flex: 1; }
+    .wd-desc { font-size: .7rem; color: var(--text-3); }
+    .wd-temp { font-weight: 800; color: var(--text); white-space: nowrap; }
+    .wd-rain { font-size: .7rem; color: var(--blue); font-weight: 700; width: 34px; text-align: right; }
+
+    .dash-layout { display: grid; grid-template-columns: 1fr 1fr 280px; gap: 16px; margin-bottom: 18px; }
+    @media (max-width: 1150px) { .dash-layout { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 900px)  { .dash-layout { grid-template-columns: 1fr; } .overview-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div id="sidebar-mount"></div>
+  <main class="main">
+    <div id="topbar-mount"></div>
+    <div class="page-content">
+
+      <!-- Stats -->
+      <div class="stats-row" style="margin-bottom:18px;">
+        <div class="stat-card fade-in"><div class="stat-icon si-green">🌱</div><div><div class="stat-val" id="d-land">5</div><div class="stat-lbl">Acres Land</div><div class="stat-trend trend-up">↑ 2 fields active</div></div></div>
+        <div class="stat-card fade-in"><div class="stat-icon si-amber">💰</div><div><div class="stat-val" id="d-roi">—</div><div class="stat-lbl">Last Year ROI</div><div class="stat-trend trend-up" id="d-roi-label">—</div></div></div>
+        <div class="stat-card fade-in"><div class="stat-icon si-blue">🌾</div><div><div class="stat-val" id="d-crop">Rice</div><div class="stat-lbl">Main Crop</div><div class="stat-trend trend-up">↑ Growing well</div></div></div>
+        <div class="stat-card fade-in"><div class="stat-icon si-red">⚠️</div><div><div class="stat-val" id="d-alert-count">3</div><div class="stat-lbl">Active Alerts</div><div class="stat-trend trend-down">↑ 1 new today</div></div></div>
+      </div>
+
+      <!-- Crop Overview + Farm Card -->
+      <div class="overview-grid">
+        <div class="card fade-in">
+          <div class="card-title">Crops Overview <a href="farm-details.html" class="view-all">View All →</a></div>
+          <div class="donut-wrap">
+            <svg width="110" height="110" viewBox="0 0 110 110" flex-shrink="0">
+              <circle cx="55" cy="55" r="38" fill="none" stroke="#f0f4f1" stroke-width="16"/>
+              <circle cx="55" cy="55" r="38" fill="none" stroke="#2d7a3a" stroke-width="16" stroke-dasharray="90.5 238.8" stroke-dashoffset="0" transform="rotate(-90 55 55)"/>
+              <circle cx="55" cy="55" r="38" fill="none" stroke="#f59e0b" stroke-width="16" stroke-dasharray="69.2 238.8" stroke-dashoffset="-90.5" transform="rotate(-90 55 55)"/>
+              <circle cx="55" cy="55" r="38" fill="none" stroke="#52c063" stroke-width="16" stroke-dasharray="78.6 238.8" stroke-dashoffset="-159.7" transform="rotate(-90 55 55)"/>
+              <text x="55" y="51" text-anchor="middle" font-size="13" font-weight="900" fill="#1a2e1f" font-family="Nunito">401K</text>
+              <text x="55" y="63" text-anchor="middle" font-size="8" fill="#7a9a80" font-family="Nunito">Total Crops</text>
+            </svg>
+            <div class="donut-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div><div><div class="legend-name">Fruits</div><div class="legend-val">34,500 · 29%</div></div></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#52c063"></div><div><div class="legend-name">Vegetables</div><div class="legend-val">2,700 · 33%</div></div></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#2d7a3a"></div><div><div class="legend-name">Grains</div><div class="legend-val">364,500 · 38%</div></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="farm-card fade-in" onclick="window.location.href='farm-details.html'">
+          <div class="farm-overlay"><div class="farm-grid-icon">⊞</div></div>
+          <div class="farm-name-row"><span class="farm-name" id="d-farmname">My Farm ✏️</span></div>
+          <div class="farm-meta">
+            <div class="farm-meta-item"><span>Crop Health</span><strong style="color:#a5f3b4;">Good</strong></div>
+            <div class="farm-meta-item"><span>Sowing Date</span><strong>Feb 21, 2024</strong></div>
+            <div class="farm-meta-item"><span>Harvest Date</span><strong>Apr 25, 2024</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Growth + Crops + Alerts/Weather -->
+      <div class="dash-layout">
+        <div class="card fade-in">
+          <div class="card-title">Crop Growth Monitoring</div>
+          <div style="display:flex;gap:6px;margin-bottom:14px;">
+            <div class="g-tab active">Crop Moisture</div>
+            <div class="g-tab">Crop Health</div>
+          </div>
+          <svg class="chart-svg" viewBox="0 0 400 110">
+            <line x1="0" y1="20" x2="400" y2="20" stroke="#f0f4f1" stroke-width="1"/>
+            <line x1="0" y1="50" x2="400" y2="50" stroke="#f0f4f1" stroke-width="1"/>
+            <line x1="0" y1="80" x2="400" y2="80" stroke="#f0f4f1" stroke-width="1"/>
+            <path d="M0,70 C40,65 80,60 120,55 C160,50 200,58 240,52 C280,46 320,42 360,40 L400,38" stroke="#2d7a3a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M0,85 C40,82 80,78 120,75 C160,72 200,74 240,70 C280,66 320,68 360,65 L400,63" stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="5,3"/>
+            <path d="M0,45 C40,44 80,42 120,40 C160,38 200,40 240,36 C280,32 320,30 360,28 L400,25" stroke="#52c063" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M0,30 C40,32 80,28 120,26 C160,24 200,22 240,20 C280,18 320,17 360,16 L400,15" stroke="#3b82f6" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <text x="0"   y="105" font-size="9" fill="#9ca3af" font-family="Nunito">Mon</text>
+            <text x="56"  y="105" font-size="9" fill="#9ca3af" font-family="Nunito">Tue</text>
+            <text x="106" y="105" font-size="9" fill="#9ca3af" font-family="Nunito">Wed</text>
+            <text x="156" y="105" font-size="9" fill="#9ca3af" font-family="Nunito">Thu</text>
+            <text x="206" y="105" font-size="9" fill="#9ca3af" font-family="Nunito">Fri</text>
+            <text x="256" y="105" font-size="9" fill="#9ca3af" font-family="Nunito">Sat</text>
+            <text x="306" y="105" font-size="9" fill="#9ca3af" font-family="Nunito">Sun</text>
+            <text x="356" y="105" font-size="9" fill="#9ca3af" font-family="Nunito">Mon</text>
+          </svg>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;">
+            <div style="display:flex;align-items:center;gap:4px;font-size:.72rem;color:var(--text-3);"><div style="width:12px;height:3px;background:#2d7a3a;border-radius:99px;"></div>Open Soil 7%</div>
+            <div style="display:flex;align-items:center;gap:4px;font-size:.72rem;color:var(--text-3);"><div style="width:12px;height:3px;background:#f59e0b;border-radius:99px;"></div>Low 14%</div>
+            <div style="display:flex;align-items:center;gap:4px;font-size:.72rem;color:var(--text-3);"><div style="width:12px;height:3px;background:#52c063;border-radius:99px;"></div>Ideal 75%</div>
+            <div style="display:flex;align-items:center;gap:4px;font-size:.72rem;color:var(--text-3);"><div style="width:12px;height:3px;background:#3b82f6;border-radius:99px;"></div>High 2%</div>
+          </div>
+        </div>
+
+        <div class="card fade-in">
+          <div class="card-title">My Crops <span class="view-all">View All →</span></div>
+          <div class="crop-list">
+            <div class="crop-item"><div class="crop-thumb">🌾</div><div class="crop-info"><div class="crop-name">Barley</div><div class="crop-stage">Maturing</div><div class="prog-bar"><div class="prog-fill pf-green" style="width:90%"></div></div></div><div class="crop-pct" style="color:var(--primary)">90%</div></div>
+            <div class="crop-item"><div class="crop-thumb">🌾</div><div class="crop-info"><div class="crop-name">Millet</div><div class="crop-stage">Ripening</div><div class="prog-bar"><div class="prog-fill pf-green" style="width:85%"></div></div></div><div class="crop-pct" style="color:var(--primary)">85%</div></div>
+            <div class="crop-item"><div class="crop-thumb">🌽</div><div class="crop-info"><div class="crop-name">Corn</div><div class="crop-stage">Vegetative</div><div class="prog-bar"><div class="prog-fill pf-amber" style="width:23%"></div></div></div><div class="crop-pct" style="color:var(--accent)">23%</div></div>
+            <div class="crop-item"><div class="crop-thumb">🌿</div><div class="crop-info"><div class="crop-name">Oats</div><div class="crop-stage">Ripening</div><div class="prog-bar"><div class="prog-fill pf-amber" style="width:75%"></div></div></div><div class="crop-pct" style="color:var(--accent)">75%</div></div>
+            <div class="crop-item"><div class="crop-thumb">🌾</div><div class="crop-info"><div class="crop-name">Rice</div><div class="crop-stage">Seed Started</div><div class="prog-bar"><div class="prog-fill pf-red" style="width:10%"></div></div></div><div class="crop-pct" style="color:var(--red)">10%</div></div>
+            <div class="crop-item"><div class="crop-thumb">🌾</div><div class="crop-info"><div class="crop-name">Wheat</div><div class="crop-stage">Matured</div><div class="prog-bar"><div class="prog-fill pf-green" style="width:100%"></div></div></div><div class="crop-pct" style="color:var(--primary)">100%</div></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card fade-in" style="margin-bottom:14px;">
+            <div class="card-title">⚠️ Alerts</div>
+            <div id="d-alerts"></div>
+          </div>
+          <div class="card fade-in">
+            <div class="card-title">🌦️ Forecast</div>
+            <div class="weather-days">
+              <div class="weather-day"><span class="wd-icon">⛅</span><div><div class="wd-day">Today</div><div class="wd-desc">Partly cloudy</div></div><div class="wd-temp">28°C</div><div class="wd-rain">20%</div></div>
+              <div class="weather-day"><span class="wd-icon">🌧️</span><div><div class="wd-day">Tomorrow</div><div class="wd-desc">Light rain</div></div><div class="wd-temp">26°C</div><div class="wd-rain">65%</div></div>
+              <div class="weather-day"><span class="wd-icon">⛈️</span><div><div class="wd-day">Day 3</div><div class="wd-desc">Heavy rain</div></div><div class="wd-temp">24°C</div><div class="wd-rain">80%</div></div>
+              <div class="weather-day"><span class="wd-icon">☀️</span><div><div class="wd-day">Day 4</div><div class="wd-desc">Sunny</div></div><div class="wd-temp">31°C</div><div class="wd-rain">5%</div></div>
+              <div class="weather-day"><span class="wd-icon">☀️</span><div><div class="wd-day">Day 5</div><div class="wd-desc">Clear sky</div></div><div class="wd-temp">33°C</div><div class="wd-rain">3%</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="shared.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    initPage('dashboard');
+    const { farmer, advisory } = await loadFarmerData();
+    updateSidebarFarmer(farmer);
+
+    document.getElementById('d-land').textContent  = farmer.landSize || '5';
+    document.getElementById('d-crop').textContent  = farmer.regularCrop || '—';
+    document.getElementById('d-farmname').textContent = `${farmer.firstName}'s Farm ✏️`;
+
+    if (advisory.roi) {
+      document.getElementById('d-roi').textContent = advisory.roi + '%';
+      const roi = parseFloat(advisory.roi);
+      const lbl = document.getElementById('d-roi-label');
+      lbl.textContent  = roi > 50 ? '↑ Excellent ROI' : roi > 20 ? '↑ Good ROI' : '↓ Low ROI';
+      lbl.className    = `stat-trend ${roi > 20 ? 'trend-up' : 'trend-down'}`;
+    }
+
+    const lvlMap = { warning:'warn', info:'info', danger:'danger', success:'success', warn:'warn' };
+    document.getElementById('d-alert-count').textContent = advisory.alerts?.length || 0;
+    document.getElementById('d-alerts').innerHTML = (advisory.alerts || [])
+      .map(a => `<div class="alert alert-${lvlMap[a.level]||'info'}">${a.icon} ${a.msg}</div>`)
+      .join('') || '<div class="alert alert-success">✅ No alerts right now.</div>';
+  });
+  </script>
+</body>
+</html>
