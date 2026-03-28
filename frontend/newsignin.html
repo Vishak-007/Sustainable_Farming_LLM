@@ -185,7 +185,7 @@ select:valid{
         <option>Acres</option>
         <option>Cents</option>
     </select>
-    <select required id="gender">
+    <select required id="Soiltype">
         <option value="" disabled selected>Soil Type</option>
         <option>Alluvial Soil</option>
         <option>Red Soil</option>
@@ -329,7 +329,7 @@ async function submitForm() {
         district: document.querySelector("#district")?.value,
         landSize: document.querySelector("#landSize")?.value,
         landUnit: document.querySelector("#landUnit")?.value,
-        soilType: document.querySelector("#soilType")?.value,
+        soilType: document.querySelector("#Soiltype")?.value,
 
         regularCrop: document.querySelector("#regularCrop")?.value,
         livestock: {
@@ -340,8 +340,8 @@ async function submitForm() {
         },
         waterDependency: document.querySelector("#waterDependency")?.value,
 
-        previousProfit: document.querySelector("#profit")?.value,
-        previousInvestment: document.querySelector("#investment")?.value,
+        previousProfit: document.querySelector("#previousProfit")?.value,
+        previousInvestment: document.querySelector("#previousInvestment")?.value,
         fertilizer: document.querySelector("#fertilizer")?.value,
         pesticide: document.querySelector("#pesticide")?.value,
         subsidy: document.querySelector("#subsidy")?.value,
@@ -350,7 +350,7 @@ async function submitForm() {
     };
 
     try {
-        const response = await fetch("http://localhost:5000/register", {
+        const response = await fetch("http://localhost:5000/api/farmers/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData)
@@ -360,6 +360,9 @@ async function submitForm() {
             steps[3].classList.add("completed");
             steps[3].innerHTML = "✔";
             progress.style.width = "100%";
+            
+            // ⭐ Store identity so maindashboard loads real API data
+            localStorage.setItem("farmerMobile", formData.mobile);
 
             window.location.href = "maindashboard.html";
         } else {

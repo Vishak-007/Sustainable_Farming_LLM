@@ -1,4 +1,13 @@
+# Node / Web
 node_modules/
 .env
 dist/
 build/
+
+# Python / ML
+__pycache__/
+*.pyc
+
+# Local Config & Agent
+.vscode/
+.gemini/
