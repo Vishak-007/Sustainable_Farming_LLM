@@ -1,379 +1,382 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Farmer Onboarding</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Onboarding</title>
 
-<style>
-body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: Arial, sans-serif;
-    background: 
-        linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-        url("farm-bg.jpg") no-repeat center center/cover;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background:
+                linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                url("farm-bg.jpg") no-repeat center center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-.container {
-    width: 650px;
-    max-width: 95%;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
+        .container {
+            width: 650px;
+            max-width: 95%;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
 
-h2 {
-    text-align: center;
-    color: #2e7d32;
-}
+        h2 {
+            text-align: center;
+            color: #2e7d32;
+        }
 
-.stepper {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-    margin-bottom: 30px;
-}
+        .stepper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 30px;
+        }
 
-.line {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    height: 4px;
-    width: 100%;
-    background: #ccc;
-    z-index: 0;
-}
+        .line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            height: 4px;
+            width: 100%;
+            background: #ccc;
+            z-index: 0;
+        }
 
-.progress-line {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    height: 4px;
-    width: 0%;
-    background: #4caf50;
-    z-index: 1;
-    transition: 0.3s;
-}
+        .progress-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            height: 4px;
+            width: 0%;
+            background: #4caf50;
+            z-index: 1;
+            transition: 0.3s;
+        }
 
-.step {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: white;
-    border: 3px solid #ccc;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    z-index: 2;
-}
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            z-index: 2;
+        }
 
-.step.active {
-    border-color: #2e7d32;
-}
+        .step.active {
+            border-color: #2e7d32;
+        }
 
-.step.completed {
-    background: #4caf50;
-    border-color: #4caf50;
-    color: white;
-}
+        .step.completed {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: white;
+        }
 
-.form-step {
-    display: none;
-}
+        .form-step {
+            display: none;
+        }
 
-.form-step.active {
-    display: block;
-}
+        .form-step.active {
+            display: block;
+        }
 
-input, select, textarea {
-    width: 100%;
-    padding: 10px;
-    margin: 8px 0;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    background-color: #fff;
-    box-sizing: border-box;
-}
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            background-color: #fff;
+            box-sizing: border-box;
+        }
 
 
-.buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-}
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
 
-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background: #2e7d32;
-    color: white;
-    cursor: pointer;
-}
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #2e7d32;
+            color: white;
+            cursor: pointer;
+        }
 
-.error {
-    color: red;
-    font-size: 14px;
-}
+        .error {
+            color: red;
+            font-size: 14px;
+        }
 
-select {
-    background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 16px;
-    padding-right: 35px;
-    color: #999;
-}
+        select {
+            background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+            padding-right: 35px;
+            color: #999;
+        }
 
-select:valid{
-    color: #000;
-}
-
-</style>
+        select:valid {
+            color: #000;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container">
-<h2>🌾 Farmer Registration</h2>
+    <div class="container">
+        <h2>🌾 Farmer Registration</h2>
 
-<div class="stepper">
-    <div class="line"></div>
-    <div class="progress-line" id="progress"></div>
-    <div class="step active">1</div>
-    <div class="step">2</div>
-    <div class="step">3</div>
-    <div class="step">4</div>
-</div>
+        <div class="stepper">
+            <div class="line"></div>
+            <div class="progress-line" id="progress"></div>
+            <div class="step active">1</div>
+            <div class="step">2</div>
+            <div class="step">3</div>
+            <div class="step">4</div>
+        </div>
 
-<!-- FORM STEPS -->
-<div class="form-step active">
-    <input type="text" placeholder="First Name" id="firstName" required>
-    <input type="text" placeholder="Last Name" id="lastName" required>
-   <select id="language" required>
-    <option value="" disabled selected>Select Preferred Language</option>
-    <option value="Tamil">Tamil</option>
-    <option value="English">English</option>
-    <option value="Hindi">Hindi</option>
-</select>
-    <input type="number" placeholder="Mobile Number" id="mobile" required>
-    <input type="number" placeholder="Age" id="age" required>
-    <input type="text" placeholder="Qualification" id="qualification" required>
-    <select required id="gender">
-        <option value="" disabled selected>Gender</option>
-        <option>Male</option>
-        <option>Female</option>
-        <option>Other</option>
-    </select>
-</div>
+        <!-- FORM STEPS -->
+        <div class="form-step active">
+            <input type="text" placeholder="First Name" id="firstName" required>
+            <input type="text" placeholder="Last Name" id="lastName" required>
+            <select id="language" required>
+                <option value="" disabled selected>Select Preferred Language</option>
+                <option value="Tamil">Tamil</option>
+                <option value="English">English</option>
+                <option value="Hindi">Hindi</option>
+            </select>
+            <input type="number" placeholder="Mobile Number" id="mobile" required>
+            <input type="number" placeholder="Age" id="age" required>
+            <input type="text" placeholder="Qualification" id="qualification" required>
+            <select required id="gender">
+                <option value="" disabled selected>Gender</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+            </select>
+        </div>
 
-<div class="form-step">
-    <input type="text" placeholder="Country" id="country" required>
-    <input type="text" placeholder="State" id="state" required>
-    <input type="text" placeholder="District" id="district" required>
-    <input type="number" placeholder="Land Size" id="landSize" required>
-    <select required id="landUnit">
-        <option value="">Unit</option>
-        <option>Acres</option>
-        <option>Cents</option>
-    </select>
-    <select required id="gender">
-        <option value="" disabled selected>Soil Type</option>
-        <option>Alluvial Soil</option>
-        <option>Red Soil</option>
-        <option>Black Soil</option>
-        <option>Laterite Soil</option>
-        <option >Sandy Soil</option>
-    </select>
-</div>
+        <div class="form-step">
+            <input type="text" placeholder="Country" id="country" required>
+            <input type="text" placeholder="State" id="state" required>
+            <input type="text" placeholder="District" id="district" required>
+            <input type="number" placeholder="Land Size" id="landSize" required>
+            <select required id="landUnit">
+                <option value="">Unit</option>
+                <option>Acres</option>
+                <option>Cents</option>
+            </select>
+            <select required id="gender">
+                <option value="" disabled selected>Soil Type</option>
+                <option>Alluvial Soil</option>
+                <option>Red Soil</option>
+                <option>Black Soil</option>
+                <option>Laterite Soil</option>
+                <option>Sandy Soil</option>
+            </select>
+        </div>
 
-<div class="form-step">
-    <input type="text" placeholder="Regular Crop" id="regularCrop" required>
+        <div class="form-step">
+            <input type="text" placeholder="Regular Crop" id="regularCrop" required>
 
-    <select id="livestockSelect" required>
-        <option value="">Livestock?</option>
-        <option value="yes">Yes</option>
-        <option value="no">No</option>
-    </select>
+            <select id="livestockSelect" required>
+                <option value="">Livestock?</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
 
-    <div id="livestockFields" style="display:none;">
-        <input type="number" id="cows" placeholder="Number of Cows">
-        <input type="number" id="goats" placeholder="Number of Goats">
-        <input type="number" id="hens" placeholder="Number of Hens">
+            <div id="livestockFields" style="display:none;">
+                <input type="number" id="cows" placeholder="Number of Cows">
+                <input type="number" id="goats" placeholder="Number of Goats">
+                <input type="number" id="hens" placeholder="Number of Hens">
+            </div>
+
+            <select id="waterDependency" required>
+                <option value="">Water Dependency</option>
+                <option>Rainfed</option>
+                <option>Borewell</option>
+                <option>Canal</option>
+                <option>Drip Irrigation</option>
+            </select>
+        </div>
+
+        <div class="form-step">
+            <input type="number" id="previousProfit" placeholder="Previous Year Profit" required>
+            <input type="number" id="previousInvestment" placeholder="Previous Year Investment" required>
+            <input type="text" id="fertilizer" placeholder="Fertilizer Used" required>
+            <input type="text" id="pesticide" placeholder="Pesticide Used" required>
+            <textarea placeholder="Government Subsidy" id="subsidy" required></textarea>
+            <input type="text" id="business" placeholder="Additional Business (Optional)">
+            <textarea placeholder="Feedback (Optional)" id="feedback"></textarea>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="buttons">
+            <button id="backBtn" onclick="prevStep()">Back</button>
+            <button id="nextBtn" onclick="nextStep()">Next</button>
+        </div>
+
     </div>
 
-    <select id="waterDependency" required>
-        <option value="">Water Dependency</option>
-        <option>Rainfed</option>
-        <option>Borewell</option>
-        <option>Canal</option>
-        <option>Drip Irrigation</option>
-    </select>
-</div>
+    <script>
+        let currentStep = 1;
+        const steps = document.querySelectorAll(".step");
+        const formSteps = document.querySelectorAll(".form-step");
+        const progress = document.getElementById("progress");
+        const errorDiv = document.getElementById("error");
+        const backBtn = document.getElementById("backBtn");
+        const nextBtn = document.getElementById("nextBtn");
 
-<div class="form-step">
-    <input type="number" id="previousProfit" placeholder="Previous Year Profit" required>
-    <input type="number" id="previousInvestment" placeholder="Previous Year Investment" required>
-    <input type="text" id="fertilizer" placeholder="Fertilizer Used" required>
-    <input type="text" id="pesticide" placeholder="Pesticide Used" required>
-    <textarea placeholder="Government Subsidy" id="subsidy" required></textarea>
-    <input type="text" id="business" placeholder="Additional Business (Optional)">
-    <textarea placeholder="Feedback (Optional)" id="feedback"></textarea>
-</div>
-
-<div class="error" id="error"></div>
-
-<div class="buttons">
-    <button id="backBtn" onclick="prevStep()">Back</button>
-    <button id="nextBtn" onclick="nextStep()">Next</button>
-</div>
-
-</div>
-
-<script>
-let currentStep = 1;
-const steps = document.querySelectorAll(".step");
-const formSteps = document.querySelectorAll(".form-step");
-const progress = document.getElementById("progress");
-const errorDiv = document.getElementById("error");
-const backBtn = document.getElementById("backBtn");
-const nextBtn = document.getElementById("nextBtn");
-
-// Livestock show/hide
-document.getElementById("livestockSelect").addEventListener("change", function(){
-    document.getElementById("livestockFields").style.display =
-        this.value === "yes" ? "block" : "none";
-});
-
-// Validate current step
-function validateStep() {
-    const inputs = formSteps[currentStep-1]
-        .querySelectorAll("input[required], select[required], textarea[required]");
-
-    for (let input of inputs) {
-        if (!input.value.trim()) {
-            errorDiv.textContent = "Please fill all required fields.";
-            return false;
-        }
-    }
-
-    errorDiv.textContent = "";
-    return true;
-}
-
-// Update UI
-function updateUI() {
-    formSteps.forEach(step => step.classList.remove("active"));
-    formSteps[currentStep-1].classList.add("active");
-
-    steps.forEach((step, index) => {
-        step.classList.remove("active");
-        if (index + 1 === currentStep) {
-            step.classList.add("active");
-        }
-    });
-
-    progress.style.width =
-        ((currentStep - 1) / (steps.length - 1)) * 100 + "%";
-
-    backBtn.style.display = currentStep === 1 ? "none" : "inline-block";
-    nextBtn.textContent = currentStep === 4 ? "Submit" : "Next";
-}
-
-// Next Button
-function nextStep() {
-    if (!validateStep()) return;
-
-    if (currentStep < 4) {
-        steps[currentStep-1].classList.add("completed");
-        steps[currentStep-1].innerHTML = "✔";
-        currentStep++;
-        updateUI();
-    } else {
-        submitForm();
-    }
-}
-
-// Back Button
-function prevStep() {
-    if (currentStep > 1) {
-        currentStep--;
-        updateUI();
-    }
-}
-
-// Submit To Backend
-async function submitForm() {
-
-    if (!validateStep()) return;
-
-    const formData = {
-        firstName: document.querySelector("#firstName")?.value,
-        lastName: document.querySelector("#lastName")?.value,
-        preferredLanguage: document.querySelector("#language")?.value,
-        mobile: document.querySelector("#mobile")?.value,
-        age: document.querySelector("#age")?.value,
-        qualification: document.querySelector("#qualification")?.value,
-        gender: document.querySelector("#gender")?.value,
-
-        country: document.querySelector("#country")?.value,
-        state: document.querySelector("#state")?.value,
-        district: document.querySelector("#district")?.value,
-        landSize: document.querySelector("#landSize")?.value,
-        landUnit: document.querySelector("#landUnit")?.value,
-        soilType: document.querySelector("#soilType")?.value,
-
-        regularCrop: document.querySelector("#regularCrop")?.value,
-        livestock: {
-            hasLivestock: document.querySelector("#livestockSelect")?.value === "yes",
-            cows: document.querySelector("#cows")?.value || 0,
-            goats: document.querySelector("#goats")?.value || 0,
-            hens: document.querySelector("#hens")?.value || 0
-        },
-        waterDependency: document.querySelector("#waterDependency")?.value,
-
-        previousProfit: document.querySelector("#profit")?.value,
-        previousInvestment: document.querySelector("#investment")?.value,
-        fertilizer: document.querySelector("#fertilizer")?.value,
-        pesticide: document.querySelector("#pesticide")?.value,
-        subsidy: document.querySelector("#subsidy")?.value,
-        additionalBusiness: document.querySelector("#business")?.value,
-        feedback: document.querySelector("#feedback")?.value
-    };
-
-    try {
-        const response = await fetch("http://localhost:5000/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData)
+        // Livestock show/hide
+        document.getElementById("livestockSelect").addEventListener("change", function () {
+            document.getElementById("livestockFields").style.display =
+                this.value === "yes" ? "block" : "none";
         });
 
-        if (response.ok) {
-            steps[3].classList.add("completed");
-            steps[3].innerHTML = "✔";
-            progress.style.width = "100%";
+        // Validate current step
+        function validateStep() {
+            const inputs = formSteps[currentStep - 1]
+                .querySelectorAll("input[required], select[required], textarea[required]");
 
-            window.location.href = "maindashboard.html";
-        } else {
-            alert("Error saving data. Mobile number might already exist.");
+            for (let input of inputs) {
+                if (!input.value.trim()) {
+                    errorDiv.textContent = "Please fill all required fields.";
+                    return false;
+                }
+            }
+
+            errorDiv.textContent = "";
+            return true;
         }
 
-    } catch (error) {
-        alert("Server not running or connection failed.");
-        console.error(error);
-    }
-}
+        // Update UI
+        function updateUI() {
+            formSteps.forEach(step => step.classList.remove("active"));
+            formSteps[currentStep - 1].classList.add("active");
 
-updateUI();
-</script>
+            steps.forEach((step, index) => {
+                step.classList.remove("active");
+                if (index + 1 === currentStep) {
+                    step.classList.add("active");
+                }
+            });
+
+            progress.style.width =
+                ((currentStep - 1) / (steps.length - 1)) * 100 + "%";
+
+            backBtn.style.display = currentStep === 1 ? "none" : "inline-block";
+            nextBtn.textContent = currentStep === 4 ? "Submit" : "Next";
+        }
+
+        // Next Button
+        function nextStep() {
+            if (!validateStep()) return;
+
+            if (currentStep < 4) {
+                steps[currentStep - 1].classList.add("completed");
+                steps[currentStep - 1].innerHTML = "✔";
+                currentStep++;
+                updateUI();
+            } else {
+                submitForm();
+            }
+        }
+
+        // Back Button
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateUI();
+            }
+        }
+
+        // Submit To Backend
+        async function submitForm() {
+
+            if (!validateStep()) return;
+
+            const formData = {
+                firstName: document.querySelector("#firstName")?.value,
+                lastName: document.querySelector("#lastName")?.value,
+                preferredLanguage: document.querySelector("#language")?.value,
+                mobile: document.querySelector("#mobile")?.value,
+                age: document.querySelector("#age")?.value,
+                qualification: document.querySelector("#qualification")?.value,
+                gender: document.querySelector("#gender")?.value,
+
+                country: document.querySelector("#country")?.value,
+                state: document.querySelector("#state")?.value,
+                district: document.querySelector("#district")?.value,
+                landSize: document.querySelector("#landSize")?.value,
+                landUnit: document.querySelector("#landUnit")?.value,
+                soilType: document.querySelector("#soilType")?.value,
+
+                regularCrop: document.querySelector("#regularCrop")?.value,
+                livestock: {
+                    hasLivestock: document.querySelector("#livestockSelect")?.value === "yes",
+                    cows: document.querySelector("#cows")?.value || 0,
+                    goats: document.querySelector("#goats")?.value || 0,
+                    hens: document.querySelector("#hens")?.value || 0
+                },
+                waterDependency: document.querySelector("#waterDependency")?.value,
+
+                previousProfit: document.querySelector("#profit")?.value,
+                previousInvestment: document.querySelector("#investment")?.value,
+                fertilizer: document.querySelector("#fertilizer")?.value,
+                pesticide: document.querySelector("#pesticide")?.value,
+                subsidy: document.querySelector("#subsidy")?.value,
+                additionalBusiness: document.querySelector("#business")?.value,
+                feedback: document.querySelector("#feedback")?.value
+            };
+
+            try {
+                const response = await fetch("http://localhost:5000/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    steps[3].classList.add("completed");
+                    steps[3].innerHTML = "✔";
+                    progress.style.width = "100%";
+
+                    window.location.href = "maindashboard.html";
+                } else {
+                    alert("Error saving data. Mobile number might already exist.");
+                }
+
+            } catch (error) {
+                alert("Server not running or connection failed.");
+                console.error(error);
+            }
+        }
+
+        updateUI();
+    </script>
 
 </body>
+
 </html>

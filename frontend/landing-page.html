@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,14 +20,19 @@
         .hero {
             min-height: 100vh;
             background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.3)),
-                        url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920') center/cover no-repeat;
+                url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920') center/cover no-repeat;
             position: relative;
 
         }
 
         @keyframes backgroundZoom {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.05); }
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.05);
+            }
         }
 
         header {
@@ -45,13 +51,14 @@
                 transform: translateY(-100%);
                 opacity: 0;
             }
+
             to {
                 transform: translateY(0);
                 opacity: 1;
             }
         }
 
-       .logo {
+        .logo {
             display: flex;
             align-items: center;
             gap: 0.8rem;
@@ -67,18 +74,30 @@
         }
 
         .logo-icon {
-            width: 60px; /* Increased container size */
+            width: 60px;
+            /* Increased container size */
             height: 60px;
-            object-fit: cover; /* Crops the image to fill the space */
-            border-radius: 50%; /* Optional: Makes the crop circular */
-            transform: scale(1.8); /* Zooms deep into the leaf to hide white background */
+            object-fit: cover;
+            /* Crops the image to fill the space */
+            border-radius: 50%;
+            /* Optional: Makes the crop circular */
+            transform: scale(1.8);
+            /* Zooms deep into the leaf to hide white background */
             animation: logoFloat 3s ease-in-out infinite;
-            filter: drop-shadow(0 0 10px rgba(212, 255, 0, 0.4)); /* Adds a slight glow */
+            filter: drop-shadow(0 0 10px rgba(212, 255, 0, 0.4));
+            /* Adds a slight glow */
         }
 
         @keyframes logoFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
         }
 
         nav {
@@ -172,15 +191,24 @@
             animation: fadeInUp 1s ease-out backwards;
         }
 
-        .title-line:nth-child(1) { animation-delay: 0.3s; }
-        .title-line:nth-child(2) { animation-delay: 0.5s; }
-        .title-line:nth-child(3) { animation-delay: 0.7s; }
+        .title-line:nth-child(1) {
+            animation-delay: 0.3s;
+        }
+
+        .title-line:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+
+        .title-line:nth-child(3) {
+            animation-delay: 0.7s;
+        }
 
         @keyframes fadeInUp {
             from {
                 opacity: 0;
                 transform: translateY(50px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -203,13 +231,27 @@
         }
 
         @keyframes bounce {
-            0%, 100% { transform: rotate(-2deg) translateY(0); }
-            50% { transform: rotate(-2deg) translateY(-10px); }
+
+            0%,
+            100% {
+                transform: rotate(-2deg) translateY(0);
+            }
+
+            50% {
+                transform: rotate(-2deg) translateY(-10px);
+            }
         }
 
         @keyframes glow {
-            0%, 100% { box-shadow: 0 10px 40px rgba(212, 255, 0, 0.3); }
-            50% { box-shadow: 0 10px 60px rgba(212, 255, 0, 0.6); }
+
+            0%,
+            100% {
+                box-shadow: 0 10px 40px rgba(212, 255, 0, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 10px 60px rgba(212, 255, 0, 0.6);
+            }
         }
 
         .dollar-icon {
@@ -226,8 +268,13 @@
         }
 
         @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .hero-description {
@@ -304,8 +351,15 @@
         }
 
         @keyframes floatBadge {
-            0%, 100% { transform: rotate(5deg) translateY(0); }
-            50% { transform: rotate(5deg) translateY(-20px); }
+
+            0%,
+            100% {
+                transform: rotate(5deg) translateY(0);
+            }
+
+            50% {
+                transform: rotate(5deg) translateY(-20px);
+            }
         }
 
         @keyframes fadeInRight {
@@ -313,6 +367,7 @@
                 opacity: 0;
                 transform: rotate(5deg) translateX(100px);
             }
+
             to {
                 opacity: 1;
                 transform: rotate(5deg) translateX(0);
@@ -349,18 +404,36 @@
             cursor: pointer;
         }
 
-        .tag:nth-child(1) { animation-delay: 1.7s; }
-        .tag:nth-child(2) { animation-delay: 1.8s; }
-        .tag:nth-child(3) { animation-delay: 1.9s; }
-        .tag:nth-child(4) { animation-delay: 2s; }
-        .tag:nth-child(5) { animation-delay: 2.1s; }
-        .tag:nth-child(6) { animation-delay: 2.2s; }
+        .tag:nth-child(1) {
+            animation-delay: 1.7s;
+        }
+
+        .tag:nth-child(2) {
+            animation-delay: 1.8s;
+        }
+
+        .tag:nth-child(3) {
+            animation-delay: 1.9s;
+        }
+
+        .tag:nth-child(4) {
+            animation-delay: 2s;
+        }
+
+        .tag:nth-child(5) {
+            animation-delay: 2.1s;
+        }
+
+        .tag:nth-child(6) {
+            animation-delay: 2.2s;
+        }
 
         @keyframes fadeInTag {
             from {
                 opacity: 0;
                 transform: translateY(20px) scale(0.8);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0) scale(1);
@@ -428,12 +501,15 @@
                 transform: translateY(100vh) rotate(0deg);
                 opacity: 0;
             }
+
             10% {
                 opacity: 0.3;
             }
+
             90% {
                 opacity: 0.3;
             }
+
             100% {
                 transform: translateY(-100px) rotate(360deg);
                 opacity: 0;
@@ -471,6 +547,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="hero">
         <div class="floating-particles">
@@ -482,9 +559,10 @@
 
         <header>
             <div class="logo">
-                <img src="https://i.pinimg.com/1200x/71/0e/fc/710efc25362ba2acda49c57c8ef20f47.jpg" alt="Logo" class="logo-icon">
-                
-<span><span style="color:greenyellow;">Eco</span>Harvest</span>
+                <img src="https://i.pinimg.com/1200x/71/0e/fc/710efc25362ba2acda49c57c8ef20f47.jpg" alt="Logo"
+                    class="logo-icon">
+
+                <span><span style="color:greenyellow;">Eco</span>Harvest</span>
             </div>
             <nav>
                 <a href="#home">Home</a>
@@ -498,20 +576,21 @@
         <div class="hero-content">
             <h1 class="hero-title">
                 <span class="title-line">
-                    Empowering   
+                    Empowering
                 </span>
                 <span class="title-line">Sustainable Agriculture</span>
                 <span class="title-line">for a Better Future</span>
             </h1>
             <p class="hero-description">
-                Join us in revolutionizing agriculture through innovative technology and sustainable practices. We are committed to enhancing crop yield, conserving resources, and supporting farmers worldwide.
+                Join us in revolutionizing agriculture through innovative technology and sustainable practices. We are
+                committed to enhancing crop yield, conserving resources, and supporting farmers worldwide.
             </p>
 
             <button class="solutions-btn">
                 Get Started
                 <span class="arrow">→</span>
             </button>
-            
+
         </div>
 
         <div class="tags">
@@ -524,4 +603,5 @@
         </div>
     </div>
 </body>
+
 </html>
