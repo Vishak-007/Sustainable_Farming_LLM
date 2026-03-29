@@ -9,9 +9,1874 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400&family=Lora:ital,wght@0,600;0,700;1,600&display=swap"
     rel="stylesheet">
+ backend
+  <style>
+    /* ═══════════════════════════════════════════════════
+   SMART FARMER DASHBOARD — Complete Design System
+   Inspired by: Farm Management UI references
+   Theme: Clean, organic, data-rich, light & airy
+   ═══════════════════════════════════════════════════ */
+
+    :root {
+      --primary: #2d7a3a;
+      --primary-light: #3a9e4a;
+      --primary-pale: #e8f5eb;
+      --primary-50: #f0faf2;
+      --accent: #f59e0b;
+      --accent-pale: #fef3c7;
+      --red: #ef4444;
+      --red-pale: #fee2e2;
+      --blue: #3b82f6;
+      --blue-pale: #dbeafe;
+      --orange: #f97316;
+
+      --bg: #f6f8f5;
+      --surface: #ffffff;
+      --border: #e8ede9;
+      --border-light: #f0f4f1;
+
+      --text: #1a2e1f;
+      --text-2: #4a6550;
+      --text-3: #7a9a80;
+      --text-muted: #a8bfac;
+
+      --sidebar-w: 220px;
+      --topbar-h: 64px;
+      --r: 14px;
+      --r-sm: 9px;
+      --r-xs: 6px;
+      --shadow: 0 1px 8px rgba(30, 60, 35, .07);
+      --shadow-md: 0 4px 20px rgba(30, 60, 35, .10);
+      --t: .2s ease;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html {
+      font-size: 15px;
+      scroll-behavior: smooth
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+      line-height: 1.5
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 99px
+    }
+
+    /* ══════════════════════════════
+   SIDEBAR
+══════════════════════════════ */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 100;
+      transition: transform var(--t);
+    }
+
+    .sidebar__brand {
+      padding: 18px 20px 16px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .brand-text {
+      line-height: 1.15;
+    }
+
+    .brand-text strong {
+      display: block;
+      font-family: 'Lora', serif;
+      font-size: .95rem;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .brand-text span {
+      font-size: .68rem;
+      color: var(--text-3);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .sidebar__nav {
+      padding: 14px 12px;
+      flex: 1;
+    }
+
+    .nav-group {
+      margin-bottom: 4px;
+    }
+
+    .nav-label {
+      font-size: .62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-muted);
+      padding: 8px 10px 4px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--text-2);
+      transition: all var(--t);
+      user-select: none;
+      margin-bottom: 2px;
+    }
+
+    .nav-item:hover {
+      background: var(--primary-pale);
+      color: var(--primary);
+    }
+
+    .nav-item.active {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 3px 10px rgba(45, 122, 58, .3);
+    }
+
+    .nav-item .ni {
+      font-size: 1rem;
+      width: 18px;
+      text-align: center;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--red);
+      color: #fff;
+      font-size: .6rem;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 99px;
+      min-width: 18px;
+      text-align: center;
+    }
+
+    .nav-item.active .nav-badge {
+      background: rgba(255, 255, 255, .3);
+    }
+
+    .sidebar__farmer {
+      margin: 0 12px 14px;
+      background: var(--primary-50);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .farmer-avatar {
+      width: 36px;
+      height: 36px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .farmer-name {
+      font-size: .82rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .farmer-loc {
+      font-size: .7rem;
+      color: var(--text-3);
+    }
+
+    /* ══════════════════════════════
+   MAIN LAYOUT
+══════════════════════════════ */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      max-width: calc(100vw - var(--sidebar-w));
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      height: var(--topbar-h);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .topbar-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 99px;
+      padding: 7px 14px;
+      font-family: inherit;
+      font-size: .82rem;
+      color: var(--text-3);
+      width: 220px;
+      transition: border-color var(--t);
+    }
+
+    .topbar-search:focus-within {
+      border-color: var(--primary-light);
+    }
+
+    .topbar-search input {
+      background: none;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: .82rem;
+      color: var(--text);
+      width: 100%;
+    }
+
+    .topbar-search input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .topbar-spacer {
+      flex: 1;
+    }
+
+    .weather-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary-50);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 6px 14px;
+      font-size: .8rem;
+      font-weight: 700;
+      color: var(--text-2);
+    }
+
+    .weather-pill .temp {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .notif-btn {
+      width: 36px;
+      height: 36px;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      position: relative;
+      transition: all var(--t);
+    }
+
+    .notif-btn:hover {
+      background: var(--primary-pale);
+      border-color: var(--primary-light);
+    }
+
+    .notif-dot {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 8px;
+      height: 8px;
+      background: var(--red);
+      border-radius: 50%;
+      border: 1.5px solid var(--surface);
+    }
+
+    .topbar-avatar {
+      width: 36px;
+      height: 36px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      cursor: pointer;
+      border: 2px solid var(--primary-pale);
+    }
+
+    .page-heading {
+      font-family: 'Lora', serif;
+      font-size: 1.1rem;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    /* ── Pages ── */
+    .page {
+      display: none;
+      padding: 22px 24px;
+      flex: 1;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* ══════════════════════════════
+   COMPONENTS
+══════════════════════════════ */
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border-radius: var(--r);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      padding: 18px 20px;
+    }
+
+    .card-title {
+      font-size: .8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--text-3);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title span {
+      color: var(--text-3);
+      font-weight: 600;
+      font-size: .75rem;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border-radius: var(--r);
+      border: 1px solid var(--border);
+      padding: 16px 18px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: transform var(--t), box-shadow var(--t);
+      cursor: default;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .si-green {
+      background: var(--primary-pale);
+    }
+
+    .si-amber {
+      background: var(--accent-pale);
+    }
+
+    .si-blue {
+      background: var(--blue-pale);
+    }
+
+    .si-red {
+      background: var(--red-pale);
+    }
+
+    .stat-val {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+
+    .stat-lbl {
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .stat-trend {
+      font-size: .72rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .trend-up {
+      color: var(--primary-light);
+    }
+
+    .trend-down {
+      color: var(--red);
+    }
+
+    /* Grid layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .grid-auto {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+    }
+
+    /* Alerts */
+    .alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--r-sm);
+      font-size: .83rem;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    .alert:last-child {
+      margin-bottom: 0;
+    }
+
+    .alert-warn {
+      background: var(--accent-pale);
+      border-left: 3px solid var(--accent);
+      color: #92400e;
+    }
+
+    .alert-danger {
+      background: var(--red-pale);
+      border-left: 3px solid var(--red);
+      color: #7f1d1d;
+    }
+
+    .alert-info {
+      background: var(--blue-pale);
+      border-left: 3px solid var(--blue);
+      color: #1e3a8a;
+    }
+
+    .alert-success {
+      background: var(--primary-pale);
+      border-left: 3px solid var(--primary-light);
+      color: var(--primary);
+    }
+
+    /* Progress bar */
+    .prog-bar {
+      height: 7px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .prog-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width .7s ease;
+    }
+
+    .pf-green {
+      background: var(--primary-light);
+    }
+
+    .pf-amber {
+      background: var(--accent);
+    }
+
+    .pf-red {
+      background: var(--red);
+    }
+
+    .pf-blue {
+      background: var(--blue);
+    }
+
+    /* Crop pills / chips */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 99px;
+      font-size: .72rem;
+      font-weight: 700;
+    }
+
+    .chip-green {
+      background: var(--primary-pale);
+      color: var(--primary);
+    }
+
+    .chip-amber {
+      background: var(--accent-pale);
+      color: #b45309;
+    }
+
+    .chip-red {
+      background: var(--red-pale);
+      color: #b91c1c;
+    }
+
+    .chip-blue {
+      background: var(--blue-pale);
+      color: #1d4ed8;
+    }
+
+    /* Detail list */
+    .dlist {
+      list-style: none;
+    }
+
+    .dlist li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border-light);
+      font-size: .83rem;
+      gap: 10px;
+    }
+
+    .dlist li:last-child {
+      border-bottom: none;
+    }
+
+    .dk {
+      color: var(--text-3);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .dv {
+      color: var(--text);
+      font-weight: 700;
+      text-align: right;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: var(--r-xs);
+      font-family: inherit;
+      font-size: .8rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all var(--t);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #245e2e;
+      box-shadow: 0 3px 12px rgba(45, 122, 58, .3);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: var(--primary-pale);
+    }
+
+    .btn-ghost {
+      background: var(--bg);
+      color: var(--text-2);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      background: var(--border);
+    }
+
+    .btn-sm {
+      padding: 5px 11px;
+      font-size: .74rem;
+    }
+
+    /* View All link */
+    .view-all {
+      font-size: .74rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .view-all:hover {
+      text-decoration: underline;
+    }
+
+    /* ══════════════════════════════
+   PAGE 1: MAIN DASHBOARD
+══════════════════════════════ */
+
+    /* Crop Overview donut */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .donut-wrap {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .donut-svg {
+      flex-shrink: 0;
+    }
+
+    .donut-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .8rem;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .legend-name {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .legend-val {
+      color: var(--text-3);
+      font-size: .72rem;
+      margin-top: 1px;
+    }
+
+    /* Farm card */
+    .farm-card {
+      background: linear-gradient(135deg, #1e3a24 0%, #2d7a3a 100%);
+      border-radius: var(--r);
+      overflow: hidden;
+      position: relative;
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 16px 18px;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .farm-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .farm-img-placeholder {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(30, 58, 36, .3) 0%, rgba(30, 58, 36, .85) 100%);
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding: 14px;
+    }
+
+    .farm-grid-icon {
+      font-size: 3rem;
+      opacity: .25;
+    }
+
+    .farm-name-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .farm-name {
+      font-family: 'Lora', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .farm-meta {
+      display: flex;
+      gap: 10px;
+      position: relative;
+    }
+
+    .farm-meta-item {
+      background: rgba(255, 255, 255, .15);
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: .72rem;
+      line-height: 1.4;
+    }
+
+    .farm-meta-item strong {
+      display: block;
+      font-weight: 800;
+      font-size: .85rem;
+      color: #a5f3b4;
+    }
+
+    /* Crop Growth mini chart */
+    .growth-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .g-tab {
+      padding: 4px 12px;
+      border-radius: 99px;
+      font-size: .74rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      color: var(--text-3);
+      transition: all var(--t);
+    }
+
+    .g-tab.active,
+    .g-tab:hover {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* SVG mini charts */
+    .chart-svg {
+      width: 100%;
+      height: 120px;
+      overflow: visible;
+    }
+
+    /* My Crops list */
+    .crop-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .crop-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .crop-item:last-child {
+      border-bottom: none;
+    }
+
+    .crop-thumb {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--primary-50);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .crop-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .crop-name {
+      font-weight: 800;
+      font-size: .85rem;
+      color: var(--text);
+    }
+
+    .crop-stage {
+      font-size: .7rem;
+      color: var(--text-3);
+      margin-bottom: 4px;
+    }
+
+    .crop-pct {
+      font-size: .75rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+      text-align: right;
+    }
+
+    /* Weather card small */
+    .weather-days {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .weather-day {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-light);
+      gap: 12px;
+      font-size: .82rem;
+    }
+
+    .weather-day:last-child {
+      border-bottom: none;
+    }
+
+    .wd-icon {
+      font-size: 1.3rem;
+      width: 28px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .wd-day {
+      font-weight: 700;
+      flex: 1;
+    }
+
+    .wd-desc {
+      font-size: .72rem;
+      color: var(--text-3);
+    }
+
+    .wd-temp {
+      font-weight: 800;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .wd-rain {
+      font-size: .7rem;
+      color: var(--blue);
+      font-weight: 700;
+      width: 36px;
+      text-align: right;
+    }
+
+    /* Dashboard 2-col layout */
+    .dash-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr 300px;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    /* ══════════════════════════════
+   PAGE 2: FARM DETAILS
+══════════════════════════════ */
+    .farm-detail-hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #1a5226 100%);
+      border-radius: var(--r);
+      padding: 22px 24px;
+      color: #fff;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .farm-detail-hero::after {
+      content: '🌾';
+      position: absolute;
+      right: 20px;
+      bottom: -10px;
+      font-size: 6rem;
+      opacity: .1;
+    }
+
+    .fdh-icon {
+      font-size: 2.8rem;
+    }
+
+    .fdh-info h2 {
+      font-family: 'Lora', serif;
+      font-size: 1.5rem;
+      margin-bottom: 4px;
+    }
+
+    .fdh-info p {
+      opacity: .75;
+      font-size: .85rem;
+    }
+
+    .fdh-badges {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .fdh-badge {
+      background: rgba(255, 255, 255, .15);
+      padding: 4px 12px;
+      border-radius: 99px;
+      font-size: .72rem;
+      font-weight: 700;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .info-item {
+      background: var(--primary-50);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 13px 15px;
+    }
+
+    .ii-label {
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--text-3);
+      margin-bottom: 5px;
+    }
+
+    .ii-value {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    /* Soil health bars */
+    .soil-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .soil-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sbr-label {
+      font-size: .8rem;
+      font-weight: 700;
+      width: 130px;
+      flex-shrink: 0;
+      color: var(--text-2);
+    }
+
+    .sbr-bar {
+      flex: 1;
+    }
+
+    .sbr-val {
+      font-size: .78rem;
+      font-weight: 800;
+      width: 36px;
+      text-align: right;
+      color: var(--text);
+    }
+
+    /* Livestock */
+    .livestock-cards {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .livestock-card {
+      background: var(--accent-pale);
+      border: 1px solid #fde68a;
+      border-radius: var(--r-sm);
+      padding: 14px 18px;
+      text-align: center;
+      min-width: 100px;
+    }
+
+    .lc-icon {
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+    }
+
+    .lc-count {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #b45309;
+      line-height: 1;
+    }
+
+    .lc-label {
+      font-size: .7rem;
+      font-weight: 700;
+      color: #92400e;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      margin-top: 2px;
+    }
+
+    /* ══════════════════════════════
+   PAGE 3: MARKET PRICES
+══════════════════════════════ */
+    .market-hero {
+      background: linear-gradient(135deg, #1e3a24 0%, var(--primary) 100%);
+      border-radius: var(--r);
+      padding: 20px 24px;
+      color: #fff;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .market-hero h2 {
+      font-family: 'Lora', serif;
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+
+    .market-hero p {
+      opacity: .7;
+      font-size: .82rem;
+    }
+
+    .mh-stats {
+      display: flex;
+      gap: 20px;
+    }
+
+    .mh-stat {
+      text-align: center;
+    }
+
+    .mh-stat-val {
+      font-size: 1.5rem;
+      font-weight: 900;
+    }
+
+    .mh-stat-lbl {
+      font-size: .7rem;
+      opacity: .7;
+    }
+
+    .price-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .83rem;
+    }
+
+    .price-table th {
+      text-align: left;
+      padding: 9px 12px;
+      background: var(--bg);
+      color: var(--text-3);
+      font-weight: 800;
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .price-table td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--border-light);
+      vertical-align: middle;
+    }
+
+    .price-table tr:hover td {
+      background: var(--primary-50);
+    }
+
+    .price-table tr.highlight td {
+      background: var(--accent-pale);
+    }
+
+    .price-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .trend-up-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: .72rem;
+      font-weight: 800;
+      background: var(--primary-pale);
+      color: var(--primary);
+    }
+
+    .trend-down-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: .72rem;
+      font-weight: 800;
+      background: var(--red-pale);
+      color: var(--red);
+    }
+
+    .mandi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 13px;
+    }
+
+    .mandi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+      transition: transform var(--t);
+    }
+
+    .mandi-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .mandi-name {
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 3px;
+      font-size: .88rem;
+    }
+
+    .mandi-dist {
+      font-size: .72rem;
+      color: var(--text-3);
+      margin-bottom: 9px;
+    }
+
+    .mandi-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: .76rem;
+      color: var(--text-2);
+      padding: 3px 0;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .ft {
+      padding: 5px 13px;
+      border-radius: 99px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      font-family: inherit;
+      font-size: .75rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--text-3);
+      transition: all var(--t);
+    }
+
+    .ft.active,
+    .ft:hover {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* ══════════════════════════════
+   PAGE 4: CROP ADVICE
+══════════════════════════════ */
+    .advice-hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #52c063 100%);
+      border-radius: var(--r);
+      padding: 22px 26px;
+      color: #fff;
+      margin-bottom: 18px;
+    }
+
+    .advice-hero h2 {
+      font-family: 'Lora', serif;
+      font-size: 1.3rem;
+      margin-bottom: 6px;
+    }
+
+    .advice-hero p {
+      opacity: .75;
+      font-size: .85rem;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .ai-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .ai-inp {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: var(--r-sm);
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: .85rem;
+      background: rgba(255, 255, 255, .18);
+      color: #fff;
+    }
+
+    .ai-inp::placeholder {
+      color: rgba(255, 255, 255, .5);
+    }
+
+    .ai-inp:focus {
+      background: rgba(255, 255, 255, .25);
+    }
+
+    .ai-btn {
+      padding: 10px 16px;
+      border-radius: var(--r-sm);
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      font-family: inherit;
+      font-size: .82rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all var(--t);
+      flex-shrink: 0;
+    }
+
+    .ai-btn:hover {
+      background: #d97706;
+    }
+
+    .ai-btn:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .ai-resp {
+      display: none;
+      margin-top: 12px;
+      background: rgba(255, 255, 255, .12);
+      border-left: 3px solid rgba(255, 255, 255, .5);
+      border-radius: var(--r-sm);
+      padding: 12px 14px;
+      font-size: .83rem;
+      line-height: 1.7;
+    }
+
+    .ai-resp.show {
+      display: block;
+    }
+
+    .advice-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .advice-card {
+      background: var(--primary-50);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 16px 18px;
+      transition: transform var(--t);
+    }
+
+    .advice-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .ac-icon {
+      font-size: 1.8rem;
+      margin-bottom: 9px;
+      display: block;
+    }
+
+    .ac-title {
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 6px;
+      font-size: .88rem;
+    }
+
+    .ac-body {
+      font-size: .8rem;
+      color: var(--text-2);
+      line-height: 1.65;
+    }
+
+    .season-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--accent-pale);
+      color: #b45309;
+      border: 1.5px solid #fde68a;
+      border-radius: 99px;
+      padding: 5px 13px;
+      font-size: .79rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .disease-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 12px;
+    }
+
+    .disease-card {
+      border: 1.5px solid #fca5a5;
+      border-radius: var(--r-sm);
+      padding: 14px 16px;
+      background: var(--surface);
+    }
+
+    .dis-name {
+      font-weight: 800;
+      color: var(--red);
+      margin-bottom: 2px;
+      font-size: .86rem;
+    }
+
+    .dis-crop {
+      font-size: .72rem;
+      color: var(--text-3);
+      margin-bottom: 7px;
+    }
+
+    .dis-tip {
+      font-size: .79rem;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+
+    /* ══════════════════════════════
+   PAGE 5: PROFILE
+══════════════════════════════ */
+    .profile-hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #1a5226 100%);
+      border-radius: var(--r);
+      padding: 26px 28px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-hero::after {
+      content: '👨‍🌾';
+      position: absolute;
+      right: 24px;
+      bottom: -8px;
+      font-size: 6rem;
+      opacity: .12;
+    }
+
+    .profile-big-avatar {
+      width: 72px;
+      height: 72px;
+      background: rgba(255, 255, 255, .2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      flex-shrink: 0;
+      border: 3px solid rgba(255, 255, 255, .3);
+    }
+
+    .ph-info h2 {
+      font-family: 'Lora', serif;
+      font-size: 1.55rem;
+      margin-bottom: 4px;
+    }
+
+    .ph-info p {
+      opacity: .72;
+      font-size: .84rem;
+      margin-bottom: 10px;
+    }
+
+    .ph-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .ph-badge {
+      background: rgba(255, 255, 255, .15);
+      padding: 4px 11px;
+      border-radius: 99px;
+      font-size: .7rem;
+      font-weight: 700;
+    }
+
+    .ph-edit-btn {
+      margin-left: auto;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, .15);
+      border: 1.5px solid rgba(255, 255, 255, .3);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: var(--r-sm);
+      font-family: inherit;
+      font-size: .8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--t);
+    }
+
+    .ph-edit-btn:hover {
+      background: rgba(255, 255, 255, .25);
+    }
+
+    .profile-tabs {
+      display: flex;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 18px;
+    }
+
+    .ptab {
+      padding: 10px 18px;
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--text-3);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all var(--t);
+    }
+
+    .ptab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .ptab-panel {
+      display: none;
+    }
+
+    .ptab-panel.active {
+      display: block;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-group label {
+      font-size: .7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--text-3);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 9px 11px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-xs);
+      font-family: inherit;
+      font-size: .85rem;
+      color: var(--text);
+      background: var(--surface);
+      outline: none;
+      transition: border-color var(--t), box-shadow var(--t);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(58, 158, 74, .1);
+    }
+
+    .form-group input:disabled,
+    .form-group select:disabled {
+      background: var(--bg);
+      color: var(--text-2);
+      cursor: default;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 72px;
+    }
+
+    .mini-stat-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .mini-stat {
+      flex: 1;
+      min-width: 120px;
+      background: var(--primary-50);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 12px;
+      text-align: center;
+    }
+
+    .ms-val {
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: var(--primary);
+    }
+
+    .ms-lbl {
+      font-size: .68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: var(--text-3);
+      margin-top: 2px;
+    }
+
+    .section-divider {
+      font-size: .72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--primary);
+      margin: 18px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .save-bar {
+      display: none;
+      position: sticky;
+      bottom: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 12px 24px;
+      margin: 0 -24px -22px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, .06);
+      z-index: 40;
+    }
+
+    .save-bar.show {
+      display: flex;
+    }
+
+    /* ── Toast ── */
+    .sf-toast {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      background: var(--text);
+      color: #fff;
+      padding: 11px 17px;
+      border-radius: var(--r-sm);
+      font-size: .82rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      box-shadow: var(--shadow-md);
+      transform: translateY(14px);
+      opacity: 0;
+      transition: all .3s ease;
+      z-index: 9999;
+      max-width: 340px;
+      pointer-events: none;
+    }
+
+    .sf-toast.show {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sf-toast.green {
+      border-left: 3px solid var(--primary-light);
+    }
+
+    .sf-toast.red {
+      border-left: 3px solid var(--red);
+    }
+
+    /* ── Loader ── */
+    .sf-loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px;
+      gap: 12px;
+      color: var(--text-3);
+      font-size: .85rem;
+    }
+
+    .spinner {
+      width: 30px;
+      height: 30px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary-light);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ── Page load animation ── */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .page.active .card,
+    .page.active .stat-card,
+    .page.active .advice-card {
+      animation: fadeUp .35s ease both;
+    }
+
+    .page.active .card:nth-child(1) {
+      animation-delay: .04s;
+    }
+
+    .page.active .card:nth-child(2) {
+      animation-delay: .08s;
+    }
+
+    .page.active .card:nth-child(3) {
+      animation-delay: .12s;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1100px) {
+      .dash-layout {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+        box-shadow: var(--shadow-md);
+      }
+
+      .main {
+        margin-left: 0;
+        max-width: 100vw;
+      }
+
+      .hamburger {
+        display: flex !important;
+      }
+
+      .dash-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .overview-grid,
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .page {
+        padding: 14px 16px;
+      }
+
+      .topbar {
+        padding: 0 14px;
+      }
+    }
+
+    .hamburger {
+      display: none;
+      width: 36px;
+      height: 36px;
+      background: none;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-xs);
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+      color: var(--text-2);
+    }
+  </style>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <link rel="stylesheet" href="style.css">
+main
 </head>
 
 <body>
@@ -42,9 +1907,12 @@
           <span class="ni">🌱</span> Crop Advice
           <span class="nav-badge">3</span>
         </div>
+
+
         <div class="nav-item" data-page="shipments">
           <span class="ni">🚚</span> Shipments
         </div>
+
       </div>
       <div class="nav-group">
         <div class="nav-label">Account</div>
@@ -85,6 +1953,12 @@
       <div class="topbar-avatar">👨‍🌾</div>
     </div>
 
+
+    <!-- ═══ PAGE: DASHBOARD ═══ -->
+    <div class="page active" id="page-dashboard">
+
+
+
     <!-- ═══ PAGE: DASHBOARD ═══ -->
     <div class="page active" id="page-dashboard">
 
@@ -93,8 +1967,14 @@
         <div class="stat-card">
           <div class="stat-icon si-green">🌱</div>
           <div>
+
+            <div class="stat-val" id="d-landsize">5</div>
+            <div class="stat-lbl">Acres Land</div>
+            <div class="stat-trend trend-up">↑ 2 fields active</div>
+
             <div class="stat-val" id="d-landsize">—</div>
             <div class="stat-lbl">Land Size</div>
+
           </div>
         </div>
         <div class="stat-card">
@@ -102,12 +1982,19 @@
           <div>
             <div class="stat-val" id="d-roi">—</div>
             <div class="stat-lbl">Last Year ROI</div>
+
+            <div class="stat-trend" id="d-roi-trend">—</div>
+
             <div class="stat-trend" style="visibility:hidden;" id="d-roi-trend">↑ Excellent ROI</div>
+
           </div>
         </div>
         <div class="stat-card">
           <div class="stat-icon si-blue">🌾</div>
           <div>
+            <div class="stat-val" id="d-crop">Rice</div>
+            <div class="stat-lbl">Main Crop</div>
+            <div class="stat-trend trend-up">↑ Growing well</div>
             <div class="stat-val" id="d-crop">—</div>
             <div class="stat-lbl">Main Crop</div>
           </div>
@@ -115,6 +2002,9 @@
         <div class="stat-card">
           <div class="stat-icon si-red">⚠️</div>
           <div>
+            <div class="stat-val" id="d-alerts">3</div>
+            <div class="stat-lbl">Active Alerts</div>
+            <div class="stat-trend trend-down">↑ 1 new today</div>
             <div class="stat-val" id="d-alerts">0</div>
             <div class="stat-lbl">Active Alerts</div>
           </div>
@@ -131,6 +2021,42 @@
             <!-- SVG Donut Chart -->
             <svg class="donut-svg" width="110" height="110" viewBox="0 0 110 110">
               <circle cx="55" cy="55" r="38" fill="none" stroke="#f0f4f1" stroke-width="16" />
+              <!-- Grains 38% -->
+              <circle cx="55" cy="55" r="38" fill="none" stroke="#2d7a3a" stroke-width="16"
+                stroke-dasharray="90.5 238.8" stroke-dashoffset="0" transform="rotate(-90 55 55)" />
+              <!-- Fruits 29% -->
+              <circle cx="55" cy="55" r="38" fill="none" stroke="#f59e0b" stroke-width="16"
+                stroke-dasharray="69.2 238.8" stroke-dashoffset="-90.5" transform="rotate(-90 55 55)" />
+              <!-- Vegetables 33% -->
+              <circle cx="55" cy="55" r="38" fill="none" stroke="#52c063" stroke-width="16"
+                stroke-dasharray="78.6 238.8" stroke-dashoffset="-159.7" transform="rotate(-90 55 55)" />
+              <text x="55" y="51" text-anchor="middle" font-size="13" font-weight="900" fill="#1a2e1f"
+                font-family="Nunito">401K</text>
+              <text x="55" y="63" text-anchor="middle" font-size="8" fill="#7a9a80" font-family="Nunito">Total
+                Crops</text>
+            </svg>
+            <div class="donut-legend">
+              <div class="legend-item">
+                <div class="legend-dot" style="background:#f59e0b"></div>
+                <div>
+                  <div class="legend-name">Fruits</div>
+                  <div class="legend-val">34,500 · 29%</div>
+                </div>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:#52c063"></div>
+                <div>
+                  <div class="legend-name">Vegetables</div>
+                  <div class="legend-val">2,700 · 33%</div>
+                </div>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:#2d7a3a"></div>
+                <div>
+                  <div class="legend-name">Grains</div>
+                  <div class="legend-val">364,500 · 38%</div>
+                </div>
+              </div>
               <text x="55" y="51" text-anchor="middle" font-size="13" font-weight="900" fill="#1a2e1f"
                 font-family="Nunito">0</text>
               <text x="55" y="63" text-anchor="middle" font-size="8" fill="#7a9a80" font-family="Nunito">Total
@@ -157,6 +2083,15 @@
           <div class="farm-meta">
             <div class="farm-meta-item">
               <span>Crop Health</span>
+              <strong style="color:#a5f3b4;" id="d-health">Good</strong>
+            </div>
+            <div class="farm-meta-item">
+              <span>Sowing Date</span>
+              <strong>Feb 21, 2024</strong>
+            </div>
+            <div class="farm-meta-item">
+              <span>Harvest Date</span>
+              <strong>Apr 25, 2024</strong>
               <strong style="color:#a5f3b4;" id="d-health">—</strong>
             </div>
             <div class="farm-meta-item">
@@ -183,6 +2118,211 @@
           </div>
           <!-- Mini SVG Line Chart -->
           <svg class="chart-svg" viewBox="0 0 400 110">
+            <defs>
+              <linearGradient id="lg1" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#2d7a3a" stop-opacity=".3" />
+                <stop offset="100%" stop-color="#2d7a3a" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <!-- Grid lines -->
+            <line x1="0" y1="20" x2="400" y2="20" stroke="#f0f4f1" stroke-width="1" />
+            <line x1="0" y1="50" x2="400" y2="50" stroke="#f0f4f1" stroke-width="1" />
+            <line x1="0" y1="80" x2="400" y2="80" stroke="#f0f4f1" stroke-width="1" />
+            <!-- Line 1 (Open Soil) -->
+            <path d="M0,70 C40,65 80,60 120,55 C160,50 200,58 240,52 C280,46 320,42 360,40 L400,38" stroke="#2d7a3a"
+              stroke-width="2.5" fill="none" stroke-linecap="round" />
+            <!-- Line 2 (Low) -->
+            <path d="M0,85 C40,82 80,78 120,75 C160,72 200,74 240,70 C280,66 320,68 360,65 L400,63" stroke="#f59e0b"
+              stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="5,3" />
+            <!-- Line 3 (Ideal) -->
+            <path d="M0,45 C40,44 80,42 120,40 C160,38 200,40 240,36 C280,32 320,30 360,28 L400,25" stroke="#52c063"
+              stroke-width="2" fill="none" stroke-linecap="round" />
+            <!-- Line 4 (High) -->
+            <path d="M0,30 C40,32 80,28 120,26 C160,24 200,22 240,20 C280,18 320,17 360,16 L400,15" stroke="#3b82f6"
+              stroke-width="2" fill="none" stroke-linecap="round" />
+            <!-- X labels -->
+            <text x="0" y="105" font-size="9" fill="#9ca3af" font-family="Nunito">Mon</text>
+            <text x="50" y="105" font-size="9" fill="#9ca3af" font-family="Nunito">Tue</text>
+            <text x="100" y="105" font-size="9" fill="#9ca3af" font-family="Nunito">Wed</text>
+            <text x="150" y="105" font-size="9" fill="#9ca3af" font-family="Nunito">Thu</text>
+            <text x="200" y="105" font-size="9" fill="#9ca3af" font-family="Nunito">Fri</text>
+            <text x="250" y="105" font-size="9" fill="#9ca3af" font-family="Nunito">Sat</text>
+            <text x="300" y="105" font-size="9" fill="#9ca3af" font-family="Nunito">Sun</text>
+            <text x="350" y="105" font-size="9" fill="#9ca3af" font-family="Nunito">Mon</text>
+          </svg>
+          <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;">
+            <div style="display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--text-3);">
+              <div style="width:14px;height:3px;background:#2d7a3a;border-radius:99px;"></div>Open Soil 7%
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--text-3);">
+              <div style="width:14px;height:3px;background:#f59e0b;border-radius:99px;"></div>Low 14%
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--text-3);">
+              <div style="width:14px;height:3px;background:#52c063;border-radius:99px;"></div>Ideal 75%
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--text-3);">
+              <div style="width:14px;height:3px;background:#3b82f6;border-radius:99px;"></div>High 2%
+            </div>
+          </div>
+        </div>
+
+        <!-- My Crops -->
+        <div class="card">
+          <div class="card-title">My Crops <span class="view-all">View All →</span></div>
+          <div class="crop-list">
+            <div class="crop-item">
+              <div class="crop-thumb">🌾</div>
+              <div class="crop-info">
+                <div class="crop-name">Barley</div>
+                <div class="crop-stage">Maturing</div>
+                <div class="prog-bar">
+                  <div class="prog-fill pf-green" style="width:90%"></div>
+                </div>
+              </div>
+              <div class="crop-pct" style="color:var(--primary)">90%</div>
+            </div>
+            <div class="crop-item">
+              <div class="crop-thumb">🌾</div>
+              <div class="crop-info">
+                <div class="crop-name">Millet</div>
+                <div class="crop-stage">Ripening</div>
+                <div class="prog-bar">
+                  <div class="prog-fill pf-green" style="width:85%"></div>
+                </div>
+              </div>
+              <div class="crop-pct" style="color:var(--primary)">85%</div>
+            </div>
+            <div class="crop-item">
+              <div class="crop-thumb">🌽</div>
+              <div class="crop-info">
+                <div class="crop-name">Corn</div>
+                <div class="crop-stage">Vegetative</div>
+                <div class="prog-bar">
+                  <div class="prog-fill pf-amber" style="width:23%"></div>
+                </div>
+              </div>
+              <div class="crop-pct" style="color:var(--accent)">23%</div>
+            </div>
+            <div class="crop-item">
+              <div class="crop-thumb">🌿</div>
+              <div class="crop-info">
+                <div class="crop-name">Oats</div>
+                <div class="crop-stage">Ripening</div>
+                <div class="prog-bar">
+                  <div class="prog-fill pf-amber" style="width:75%"></div>
+                </div>
+              </div>
+              <div class="crop-pct" style="color:var(--accent)">75%</div>
+            </div>
+            <div class="crop-item">
+              <div class="crop-thumb">🌾</div>
+              <div class="crop-info">
+                <div class="crop-name">Rice</div>
+                <div class="crop-stage">Seed Started</div>
+                <div class="prog-bar">
+                  <div class="prog-fill pf-red" style="width:10%"></div>
+                </div>
+              </div>
+              <div class="crop-pct" style="color:var(--red)">10%</div>
+            </div>
+            <div class="crop-item">
+              <div class="crop-thumb">🌾</div>
+              <div class="crop-info">
+                <div class="crop-name">Wheat</div>
+                <div class="crop-stage">Matured</div>
+                <div class="prog-bar">
+                  <div class="prog-fill pf-green" style="width:100%"></div>
+                </div>
+              </div>
+              <div class="crop-pct" style="color:var(--primary)">100%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerts + Weather -->
+        <div>
+          <div class="card" style="margin-bottom:14px;">
+            <div class="card-title">⚠️ Alerts</div>
+            <div id="d-alerts-wrap">
+              <div class="alert alert-warn">⚠️ Rainfed farm — plan drought-resistant varieties before dry season.</div>
+              <div class="alert alert-info">ℹ️ You may be eligible for PM-KISAN ₹6,000/year scheme.</div>
+              <div class="alert alert-success">✅ Wheat crop has matured — ready for harvest!</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">🌦️ Forecast</div>
+            <div class="weather-days">
+              <div class="weather-day"><span class="wd-icon">⛅</span>
+                <div>
+                  <div class="wd-day">Today</div>
+                  <div class="wd-desc">Partly cloudy</div>
+                </div>
+                <div class="wd-temp">28°C</div>
+                <div class="wd-rain">20%</div>
+              </div>
+              <div class="weather-day"><span class="wd-icon">🌧️</span>
+                <div>
+                  <div class="wd-day">Tomorrow</div>
+                  <div class="wd-desc">Light rain</div>
+                </div>
+                <div class="wd-temp">26°C</div>
+                <div class="wd-rain">65%</div>
+              </div>
+              <div class="weather-day"><span class="wd-icon">⛈️</span>
+                <div>
+                  <div class="wd-day">Day 3</div>
+                  <div class="wd-desc">Heavy rain</div>
+                </div>
+                <div class="wd-temp">24°C</div>
+                <div class="wd-rain">80%</div>
+              </div>
+              <div class="weather-day"><span class="wd-icon">☀️</span>
+                <div>
+                  <div class="wd-day">Day 4</div>
+                  <div class="wd-desc">Sunny</div>
+                </div>
+                <div class="wd-temp">31°C</div>
+                <div class="wd-rain">5%</div>
+              </div>
+              <div class="weather-day"><span class="wd-icon">☀️</span>
+                <div>
+                  <div class="wd-day">Day 5</div>
+                  <div class="wd-desc">Clear sky</div>
+                </div>
+                <div class="wd-temp">33°C</div>
+                <div class="wd-rain">3%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-dashboard -->
+
+    <!-- ═══ PAGE: FARM DETAILS ═══ -->
+    <div class="page" id="page-farm">
+
+      <div class="farm-detail-hero">
+        <div class="fdh-icon">🌾</div>
+        <div class="fdh-info">
+          <h2 id="fdh-name">My Farm</h2>
+          <p id="fdh-sub">Loading farm details…</p>
+          <div class="fdh-badges">
+            <span class="fdh-badge" id="fdh-crop">Rice</span>
+            <span class="fdh-badge" id="fdh-land">5 Acres</span>
+            <span class="fdh-badge" id="fdh-state">Maharashtra</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:16px;">
+        <div class="card">
+          <div class="card-title">📍 Location</div>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="ii-label">Country</div>
+              <div class="ii-value" id="fi-country">India</div>
+            </div>
             <!-- Dynamic Chart -->
           </svg>
         </div>
@@ -369,6 +2509,17 @@
           <h2>📊 Market Prices</h2>
           <p>Live mandi rates &amp; price trends for your crops</p>
         </div>
+        <div class="mh-stats">
+          <div class="mh-stat">
+            <div class="mh-stat-val">12</div>
+            <div class="mh-stat-lbl">Tracked Crops</div>
+          </div>
+          <div class="mh-stat">
+            <div class="mh-stat-val">8</div>
+            <div class="mh-stat-lbl">Rising Today</div>
+          </div>
+          <div class="mh-stat">
+            <div class="mh-stat-val">4</div>
         <div class="mh-stats" style="display: none;">
           <div class="mh-stat">
             <div class="mh-stat-val" id="mkt-tracked">—</div>
@@ -386,6 +2537,38 @@
       </div>
 
       <!-- Stats -->
+      <div class="stats-row" style="margin-bottom:18px;">
+        <div class="stat-card">
+          <div class="stat-icon si-green">🌾</div>
+          <div>
+            <div class="stat-val" id="mk-crop-price">₹2,350</div>
+            <div class="stat-lbl">Rice (Your Crop)</div>
+            <div class="stat-trend trend-up">↑ 3.2% today</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon si-amber">🌽</div>
+          <div>
+            <div class="stat-val">₹2,240</div>
+            <div class="stat-lbl">Maize</div>
+            <div class="stat-trend trend-up">↑ 2.1%</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon si-blue">🌿</div>
+          <div>
+            <div class="stat-val">₹5,100</div>
+            <div class="stat-lbl">Soybean</div>
+            <div class="stat-trend trend-up">↑ 3.8%</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon si-red">🧅</div>
+          <div>
+            <div class="stat-val">₹1,800</div>
+            <div class="stat-lbl">Onion</div>
+            <div class="stat-trend trend-down">↓ 8.1%</div>
+          </div>
       <div class="stats-row" id="mkt-stats-row" style="margin-bottom:18px;">
         <!-- Dynamic Market Stats -->
       </div>
@@ -415,6 +2598,26 @@
       </div>
 
       <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">Crop Price Index <span id="mkt-upd">Updated: Just now</span></div>
+        <div class="filter-tabs">
+          <button class="ft active" onclick="filterMkt('all',this)">All Crops</button>
+          <button class="ft" onclick="filterMkt('up',this)">↑ Rising</button>
+          <button class="ft" onclick="filterMkt('down',this)">↓ Falling</button>
+          <button class="ft" onclick="filterMkt('yours',this)">Your Crop</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="price-table" id="price-table">
+            <thead>
+              <tr>
+                <th>Crop</th>
+                <th>Market Price (₹/qtl)</th>
+                <th>MSP (₹/qtl)</th>
+                <th>vs MSP</th>
+                <th>Today's Change</th>
+              </tr>
+            </thead>
+            <tbody id="price-tbody"></tbody>
+          </table>
         <div class="card-title">🤖 AI Price Prediction Monitor</div>
         <div style="display:flex; gap: 10px; margin-bottom: 14px;">
           <input type="text" id="predict-crop" placeholder="Enter crop (e.g. Wheat, Rice, Potato)" class="ai-inp"
@@ -470,6 +2673,84 @@
       <div class="card">
         <div class="card-title">🦠 Disease Alerts for Your Crop</div>
         <div class="disease-grid" id="disease-grid"><!-- filled by JS --></div>
+      </div>
+    </div><!-- /page-advice -->
+
+    <!-- ═══ PAGE: PROFILE ═══ -->
+    <div class="page" id="page-profile">
+
+      <div class="profile-hero">
+        <div class="profile-big-avatar" id="pro-avatar">👨‍🌾</div>
+        <div class="ph-info">
+          <h2 id="pro-name">Rajan Sharma</h2>
+          <p id="pro-sub">📱 Loading… &nbsp;·&nbsp; 📍 India</p>
+          <div class="ph-badges" id="pro-badges">
+            <span class="ph-badge">🌾 Rice</span>
+            <span class="ph-badge">🗺️ 5 Acres</span>
+          </div>
+        </div>
+        <button class="ph-edit-btn" onclick="toggleEdit()">✏️ Edit Profile</button>
+      </div>
+
+      <div class="mini-stat-row" id="pro-stats">
+        <div class="mini-stat">
+          <div class="ms-val" id="ps-age">—</div>
+          <div class="ms-lbl">Age</div>
+        </div>
+        <div class="mini-stat">
+          <div class="ms-val" id="ps-roi">—</div>
+          <div class="ms-lbl">Last Year ROI</div>
+        </div>
+        <div class="mini-stat">
+          <div class="ms-val" id="ps-profit">—</div>
+          <div class="ms-lbl">Last Profit</div>
+        </div>
+        <div class="mini-stat">
+          <div class="ms-val" id="ps-qual">—</div>
+          <div class="ms-lbl">Education</div>
+        </div>
+      </div>
+
+      <div class="profile-tabs">
+        <button class="ptab active" onclick="showPTab('personal',this)">Personal</button>
+        <button class="ptab" onclick="showPTab('farm',this)">Farm Info</button>
+        <button class="ptab" onclick="showPTab('financial',this)">Financial</button>
+      </div>
+
+      <div class="ptab-panel active" id="ptp-personal">
+        <div class="card">
+          <div class="form-grid">
+            <div class="form-group"><label>First Name</label><input id="pf-fn" disabled></div>
+            <div class="form-group"><label>Last Name</label><input id="pf-ln" disabled></div>
+            <div class="form-group"><label>Mobile (read-only)</label><input id="pf-mob" disabled
+                style="background:var(--bg)"></div>
+            <div class="form-group"><label>Age</label><input id="pf-age" type="number" disabled></div>
+            <div class="form-group"><label>Gender</label><input id="pf-gen" disabled></div>
+            <div class="form-group"><label>Language</label><input id="pf-lang" disabled></div>
+            <div class="form-group"><label>Qualification</label><input id="pf-qual" disabled></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ptab-panel" id="ptp-farm">
+        <div class="card">
+          <div class="section-divider">Location</div>
+          <div class="form-grid">
+            <div class="form-group"><label>State</label><input id="pf-state" disabled></div>
+            <div class="form-group"><label>District</label><input id="pf-dist" disabled></div>
+          </div>
+          <div class="section-divider">Land & Crop</div>
+          <div class="form-grid">
+            <div class="form-group"><label>Land Size</label><input id="pf-land" type="number" disabled></div>
+            <div class="form-group"><label>Land Unit</label><input id="pf-unit" disabled></div>
+            <div class="form-group"><label>Soil Type</label><input id="pf-soil" disabled></div>
+            <div class="form-group"><label>Main Crop</label><input id="pf-crop" disabled></div>
+            <div class="form-group"><label>Water Source</label><input id="pf-water" disabled></div>
+          </div>
+          <div class="section-divider">Inputs</div>
+          <div class="form-grid">
+            <div class="form-group"><label>Fertilizer Used</label><input id="pf-fert" disabled></div>
+            <div class="form-group"><label>Pesticide Used</label><input id="pf-pest" disabled></div>
       </div>
     </div><!-- /page-advice -->
 
@@ -619,6 +2900,73 @@
        SMART FARMER DASHBOARD — JavaScript
        ═══════════════════════════════════════════════════ */
 
+    const API_BASE = 'http://localhost:3000';
+
+    // ── Auth ──────────────────────────────────────────
+    const Auth = {
+      getMobile() { return localStorage.getItem('farmerMobile'); },
+      getName() { return localStorage.getItem('farmerName') || 'Farmer'; },
+      logout() {
+        localStorage.removeItem('farmerMobile');
+        localStorage.removeItem('farmerName');
+        window.location.href = 'landingpage.html';
+      }
+    };
+
+    function logout() { Auth.logout(); }
+
+    // ── Toast ──────────────────────────────────────────
+    function toast(msg, type = 'green') {
+      const t = document.getElementById('toast');
+      t.className = `sf-toast ${type}`;
+      t.innerHTML = (type === 'green' ? '✅ ' : '❌ ') + msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    // ── API ───────────────────────────────────────────
+    const API = {
+      async get(path) {
+        const r = await fetch(API_BASE + path, { headers: { 'Content-Type': 'application/json' } });
+        if (!r.ok) throw new Error(`API error ${r.status}`);
+        return r.json();
+      },
+      async put(path, data) {
+        const r = await fetch(API_BASE + path, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+        return r.json();
+      }
+    };
+
+    // ── Navigation ─────────────────────────────────────
+    let currentPage = 'dashboard';
+
+    function goPage(name) {
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const navEl = document.querySelector(`[data-page="${name}"]`);
+      const pageEl = document.getElementById(`page-${name}`);
+      if (navEl) navEl.classList.add('active');
+      if (pageEl) pageEl.classList.add('active');
+      currentPage = name;
+      // Close sidebar on mobile
+      document.getElementById('sidebar').classList.remove('open');
+    }
+
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => goPage(item.dataset.page));
+    });
+
+
+  </main>
+
+  <!-- Toast -->
+  <div class="sf-toast" id="toast"></div>
+
+  <script>
+    /* ═══════════════════════════════════════════════════
+       SMART FARMER DASHBOARD — JavaScript
+       ═══════════════════════════════════════════════════ */
+
     const API_BASE = 'http://localhost:5000/api';
 
     // ── Auth ──────────────────────────────────────────
@@ -681,6 +3029,10 @@
 
     async function loadAll() {
       const mobile = Auth.getMobile();
+      if (!mobile) return; // demo mode - use defaults
+
+      try {
+        const { farmer, advisory } = await API.get(`/farmer/${mobile}`);
       if (!mobile) {
         window.location.href = 'signin.html';
         return;
@@ -694,6 +3046,14 @@
         populateFarm(farmer);
         populateProfile(farmer, advisory);
       } catch (e) {
+        console.warn('Backend not connected — running in demo mode');
+        loadDemoData();
+      }
+
+      try {
+        const { prices } = await API.get('/market-prices');
+        populateMarket(prices);
+      } catch { populateMarket(demoMarketPrices); }
         console.error('Backend not connected — running in demo mode');
         toast('Failed to load profile data', 'red');
       }
@@ -995,6 +3355,20 @@
     }
 
     function renderMandis() {
+      const mandis = [
+        { name: 'APMC Nashik', dist: '12 km', open: '6AM–2PM', days: 'Mon–Sat', fee: '1.5%' },
+        { name: 'Lasalgaon Mandi', dist: '8 km', open: '7AM–1PM', days: 'Tue,Thu,Sat', fee: '1.5%' },
+        { name: 'Vashi APMC', dist: '45 km', open: '6AM–3PM', days: 'Mon–Fri', fee: '2%' },
+        { name: 'Pune APMC', dist: '35 km', open: '5AM–12PM', days: 'Daily', fee: '1%' },
+      ];
+      document.getElementById('mandi-grid').innerHTML = mandis.map(m => `
+    <div class="mandi-card">
+      <div class="mandi-name">🏪 ${m.name}</div>
+      <div class="mandi-dist">📍 ${m.dist} away</div>
+      <div class="mandi-row"><span>Timing</span><span>${m.open}</span></div>
+      <div class="mandi-row"><span>Open Days</span><span>${m.days}</span></div>
+      <div class="mandi-row"><span>Commission</span><span>${m.fee}</span></div>
+    </div>`).join('');
       const mandis = [];
       if (!mandis.length) {
         document.getElementById('mandi-grid').innerHTML = '<div style="padding: 10px; color: var(--text-3); font-size: 0.9rem;">No nearby Mandis data available.</div>';
@@ -1027,6 +3401,16 @@
       const seasons = { kharif: '🌧️ Kharif Season (Jun–Nov)', rabi: '❄️ Rabi Season (Nov–Apr)', zaid: '☀️ Zaid Season (Mar–Jun)' };
       document.getElementById('season-pill').textContent = seasons[season] || '🗓️ ' + season;
 
+      const advice = advisoryData?.advice || [
+        { icon: '🌿', title: 'Fertilizer', body: 'Apply NPK 20-10-10 at transplanting. Top-dress with Urea at tillering stage.' },
+        { icon: '💧', title: 'Irrigation', body: 'Use drip or sprinkler irrigation to save water. Monitor borewell levels.' },
+        { icon: '🌱', title: 'Soil Health', body: 'Black soil retains moisture well. Add lime if pH drops below 6.' },
+        { icon: '📅', title: 'Seasonal Tips', body: 'Rabi season is ideal for wheat, mustard, chickpea. Irrigate at critical growth stages.' },
+        { icon: '🐄', title: 'Livestock Integration', body: 'Use animal manure as organic fertilizer — reduces chemical costs by 30–40%.' },
+        { icon: '💰', title: 'Financial Insight', body: 'Strong ROI this season. Consider investing in better irrigation equipment for next cycle.' },
+      ];
+
+      document.getElementById('advice-grid').innerHTML = advice.map(a => `
       const advice = advisoryData?.advice || [];
       if (!advice.length) {
         document.getElementById('advice-grid').innerHTML = '<div style="padding: 10px; color: var(--text-3); font-size: 0.9rem;">Complete your farm profile to receive personalized advice.</div>';
@@ -1037,6 +3421,17 @@
       <div class="ac-title">${a.title}</div>
       <div class="ac-body">${a.body}</div>
     </div>`).join('');
+
+      const crop = farmerData?.regularCrop || 'Rice';
+      const diseaseDb = {
+        Rice: [{ name: 'Blast Disease', tip: 'Spray Tricyclazole 0.1% at tillering. Avoid excess nitrogen.' }, { name: 'Brown Plant Hopper', tip: 'Use BPMC spray. Keep field drainage clear.' }],
+        Wheat: [{ name: 'Yellow Rust', tip: 'Apply Propiconazole 0.1% at first sign. Use resistant varieties.' }, { name: 'Aphids', tip: 'Spray Dimethoate 0.03%. Natural predators help.' }],
+        Maize: [{ name: 'Fall Armyworm', tip: 'Apply Emamectin benzoate 5 SG. Monitor whorls daily.' }, { name: 'Leaf Blight', tip: 'Use Mancozeb 0.25% spray. Ensure proper crop spacing.' }],
+        Cotton: [{ name: 'Bollworm', tip: 'Use Bt cotton. Spray Chlorpyrifos if >5 larvae/plant.' }, { name: 'Whitefly', tip: 'Spray Imidacloprid 17.8 SL. Use yellow sticky traps.' }],
+        default: [{ name: 'Root Rot', tip: 'Treat seeds with Thiram 75 WP. Avoid waterlogging.' }, { name: 'Leaf Spot', tip: 'Apply Mancozeb 0.25% spray. Ensure proper spacing.' }]
+      };
+      const diseases = diseaseDb[crop] || diseaseDb.default;
+      document.getElementById('disease-grid').innerHTML = diseases.map(d => `
       }
 
       const crop = farmerData?.regularCrop || 'Rice';

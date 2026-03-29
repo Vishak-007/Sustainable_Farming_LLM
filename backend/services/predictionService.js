@@ -14,12 +14,16 @@ export const predictCropPrice = async (cropName) => {
     // 2. Prepare the input data for Python script
     // Note: Python script expects 10 days of prices explicitly
     const formattedCrop = cropName.charAt(0).toUpperCase() + cropName.slice(1).toLowerCase();
-    
+
     // Ensure the crop name is one of the supported ones or Python will fall back gracefully or throw.
     const inputData = {
       crop: formattedCrop,
       last_10_day_prices: historicalPrices,
+
+      demand: "medium",
+
       demand: "medium", 
+
       supply: "medium",
       rainfall: "medium",
       season: "Summer"
@@ -28,11 +32,19 @@ export const predictCropPrice = async (cropName) => {
     // 3. Spawn Python process
     // The python script sits at the root directory of the project, which is two levels up from services
     const pythonScriptPath = path.resolve(__dirname, "../../price_prediction.py");
+
+
+    return new Promise((resolve, reject) => {
+      // Use 'python' for Windows
+      const pyProcess = spawn("python", [pythonScriptPath, "--json", JSON.stringify(inputData)]);
+
+
     
     return new Promise((resolve, reject) => {
       // Use 'python' for Windows
       const pyProcess = spawn("python", [pythonScriptPath, "--json", JSON.stringify(inputData)]);
       
+
       let stdoutData = "";
       let stderrData = "";
 

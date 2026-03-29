@@ -5,6 +5,10 @@ import mongoose from "mongoose";
 
 import mandiRoutes from "./routes/mandiRoutes.js";
 import shipmentRoutes from "./routes/shipmentRoutes.js";
+import authRoutes from "./routes/auth.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+
 import notificationRoutes from "./routes/notificationRoutes.js";
 import farmerRoutes from "./routes/farmerRoutes.js";
 
@@ -18,6 +22,13 @@ app.use(express.json());
 // Routes
 app.use("/api/mandi", mandiRoutes);
 app.use("/api/shipments", shipmentRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/admin", adminRoutes);
+
+const PORT = process.env.PORT || 5000;
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/agrofarmers';
+
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/farmers", farmerRoutes);
 

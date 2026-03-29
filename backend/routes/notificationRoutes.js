@@ -26,7 +26,7 @@ router.get('/farmer', (req, res) => {
       date: new Date(Date.now() - 86400000).toISOString() // 1 day ago
     }
   ];
-  
+
   res.json({ success: true, notifications });
 });
 

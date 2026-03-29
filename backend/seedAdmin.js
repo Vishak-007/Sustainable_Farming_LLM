@@ -18,7 +18,7 @@ const seed = async () => {
     if (!existingAdmin) {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash('HyperHackers...', salt);
-      
+
       const adminUser = new User({
         role: 'admin',
         name: 'System Admin',
@@ -29,10 +29,16 @@ const seed = async () => {
       await adminUser.save();
       console.log('Admin user seeded successfully!');
     } else {
+      const salt = await bcrypt.genSalt(10);
+      existingAdmin.password = await bcrypt.hash('HyperHackers...', salt);
+      await existingAdmin.save();
+      console.log('Admin user already exists, updated password!');
+
         const salt = await bcrypt.genSalt(10);
         existingAdmin.password = await bcrypt.hash('HyperHackers...', salt);
         await existingAdmin.save();
         console.log('Admin user already exists, updated password!');
+
     }
 
     // Seed dummy shipments if none exist
