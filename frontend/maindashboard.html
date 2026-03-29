@@ -9,6 +9,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400&family=Lora:ital,wght@0,600;0,700;1,600&display=swap"
     rel="stylesheet">
+ backend
   <style>
     /* ═══════════════════════════════════════════════════
    SMART FARMER DASHBOARD — Complete Design System
@@ -1871,6 +1872,11 @@
       color: var(--text-2);
     }
   </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+main
 </head>
 
 <body>
@@ -1901,6 +1907,12 @@
           <span class="ni">🌱</span> Crop Advice
           <span class="nav-badge">3</span>
         </div>
+
+
+        <div class="nav-item" data-page="shipments">
+          <span class="ni">🚚</span> Shipments
+        </div>
+
       </div>
       <div class="nav-group">
         <div class="nav-label">Account</div>
@@ -1941,6 +1953,12 @@
       <div class="topbar-avatar">👨‍🌾</div>
     </div>
 
+
+    <!-- ═══ PAGE: DASHBOARD ═══ -->
+    <div class="page active" id="page-dashboard">
+
+
+
     <!-- ═══ PAGE: DASHBOARD ═══ -->
     <div class="page active" id="page-dashboard">
 
@@ -1949,9 +1967,14 @@
         <div class="stat-card">
           <div class="stat-icon si-green">🌱</div>
           <div>
+
             <div class="stat-val" id="d-landsize">5</div>
             <div class="stat-lbl">Acres Land</div>
             <div class="stat-trend trend-up">↑ 2 fields active</div>
+
+            <div class="stat-val" id="d-landsize">—</div>
+            <div class="stat-lbl">Land Size</div>
+
           </div>
         </div>
         <div class="stat-card">
@@ -1959,7 +1982,11 @@
           <div>
             <div class="stat-val" id="d-roi">—</div>
             <div class="stat-lbl">Last Year ROI</div>
+
             <div class="stat-trend" id="d-roi-trend">—</div>
+
+            <div class="stat-trend" style="visibility:hidden;" id="d-roi-trend">↑ Excellent ROI</div>
+
           </div>
         </div>
         <div class="stat-card">
@@ -1968,6 +1995,8 @@
             <div class="stat-val" id="d-crop">Rice</div>
             <div class="stat-lbl">Main Crop</div>
             <div class="stat-trend trend-up">↑ Growing well</div>
+            <div class="stat-val" id="d-crop">—</div>
+            <div class="stat-lbl">Main Crop</div>
           </div>
         </div>
         <div class="stat-card">
@@ -1976,6 +2005,8 @@
             <div class="stat-val" id="d-alerts">3</div>
             <div class="stat-lbl">Active Alerts</div>
             <div class="stat-trend trend-down">↑ 1 new today</div>
+            <div class="stat-val" id="d-alerts">0</div>
+            <div class="stat-lbl">Active Alerts</div>
           </div>
         </div>
       </div>
@@ -2026,6 +2057,17 @@
                   <div class="legend-val">364,500 · 38%</div>
                 </div>
               </div>
+              <text x="55" y="51" text-anchor="middle" font-size="13" font-weight="900" fill="#1a2e1f"
+                font-family="Nunito">0</text>
+              <text x="55" y="63" text-anchor="middle" font-size="8" fill="#7a9a80" font-family="Nunito">Total
+                Crops</text>
+            </svg>
+            <div class="donut-center">
+              <div class="dc-val" style="color:var(--text);font-size:1.4rem;font-weight:700">—</div>
+              <div class="dc-lbl" style="color:var(--text-3);font-size:0.75rem">Planted</div>
+            </div>
+            <div class="donut-legend">
+              <!-- Dynamic Legend -->
             </div>
           </div>
         </div>
@@ -2050,6 +2092,15 @@
             <div class="farm-meta-item">
               <span>Harvest Date</span>
               <strong>Apr 25, 2024</strong>
+              <strong style="color:#a5f3b4;" id="d-health">—</strong>
+            </div>
+            <div class="farm-meta-item">
+              <span>Sowing Date</span>
+              <strong id="d-sow">—</strong>
+            </div>
+            <div class="farm-meta-item">
+              <span>Harvest Date</span>
+              <strong id="d-harv">—</strong>
             </div>
           </div>
         </div>
@@ -2272,6 +2323,61 @@
               <div class="ii-label">Country</div>
               <div class="ii-value" id="fi-country">India</div>
             </div>
+            <!-- Dynamic Chart -->
+          </svg>
+        </div>
+
+        <!-- My Crops -->
+        <div class="card">
+          <div class="card-title">My Crops <span class="view-all">View All →</span></div>
+          <div class="crop-list" id="d-crop-list">
+            <div style="padding: 20px; text-align: center; color: var(--text-3); font-size: 0.9rem;">No crops added yet.</div>
+          </div>
+        </div>
+
+        <!-- Alerts + Weather -->
+        <div>
+          <div class="card" style="margin-bottom:14px;">
+            <div class="card-title">⚠️ Alerts</div>
+            <div id="d-alerts-wrap">
+              <div style="padding: 10px; color: var(--text-3); font-size: 0.9rem;">No alerts at this time.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">🌦️ Forecast</div>
+            <div class="weather-days">
+              <div style="padding: 10px; color: var(--text-3); font-size: 0.9rem;">Weather forecast API not connected.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-dashboard -->
+
+    <!-- ═══ PAGE: FARM DETAILS ═══ -->
+    <div class="page" id="page-farm">
+
+      <div class="farm-detail-hero">
+        <div class="fdh-icon">🌾</div>
+        <div class="fdh-info">
+          <h2 id="fdh-name">My Farm</h2>
+          <p id="fdh-sub">Loading farm details…</p>
+          <div class="fdh-badges">
+            <span class="fdh-badge" id="fdh-crop">Rice</span>
+            <span class="fdh-badge" id="fdh-land">5 Acres</span>
+            <span class="fdh-badge" id="fdh-state">Maharashtra</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:16px;">
+        <div class="card">
+          <div class="card-title">📍 Location</div>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="ii-label">Country</div>
+              <div class="ii-value" id="fi-country">India</div>
+            </div>
             <div class="info-item">
               <div class="ii-label">State</div>
               <div class="ii-value" id="fi-state">—</div>
@@ -2414,6 +2520,17 @@
           </div>
           <div class="mh-stat">
             <div class="mh-stat-val">4</div>
+        <div class="mh-stats" style="display: none;">
+          <div class="mh-stat">
+            <div class="mh-stat-val" id="mkt-tracked">—</div>
+            <div class="mh-stat-lbl">Tracked Crops</div>
+          </div>
+          <div class="mh-stat">
+            <div class="mh-stat-val" id="mkt-rising">—</div>
+            <div class="mh-stat-lbl">Rising Today</div>
+          </div>
+          <div class="mh-stat">
+            <div class="mh-stat-val" id="mkt-falling">—</div>
             <div class="mh-stat-lbl">Falling Today</div>
           </div>
         </div>
@@ -2452,6 +2569,31 @@
             <div class="stat-lbl">Onion</div>
             <div class="stat-trend trend-down">↓ 8.1%</div>
           </div>
+      <div class="stats-row" id="mkt-stats-row" style="margin-bottom:18px;">
+        <!-- Dynamic Market Stats -->
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">Crop Price Index <span id="mkt-upd">Updated: Just now</span></div>
+        <div class="filter-tabs">
+          <button class="ft active" onclick="filterMkt('all',this)">All Crops</button>
+          <button class="ft" onclick="filterMkt('up',this)">↑ Rising</button>
+          <button class="ft" onclick="filterMkt('down',this)">↓ Falling</button>
+          <button class="ft" onclick="filterMkt('yours',this)">Your Crop</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="price-table" id="price-table">
+            <thead>
+              <tr>
+                <th>Crop</th>
+                <th>Market Price (₹/qtl)</th>
+                <th>MSP (₹/qtl)</th>
+                <th>vs MSP</th>
+                <th>Today's Change</th>
+              </tr>
+            </thead>
+            <tbody id="price-tbody"></tbody>
+          </table>
         </div>
       </div>
 
@@ -2476,6 +2618,26 @@
             </thead>
             <tbody id="price-tbody"></tbody>
           </table>
+        <div class="card-title">🤖 AI Price Prediction Monitor</div>
+        <div style="display:flex; gap: 10px; margin-bottom: 14px;">
+          <input type="text" id="predict-crop" placeholder="Enter crop (e.g. Wheat, Rice, Potato)" class="ai-inp"
+            style="max-width:250px; background: var(--border-light); color: var(--text);">
+          <button class="btn btn-primary" onclick="handlePredictPrice()">Forecast Price</button>
+        </div>
+        <div id="predict-loader" style="display:none; color: var(--text-3); font-weight:bold; font-size: 0.8rem;">⏳
+          Analyzing historical data and running ML model...</div>
+        <div id="predict-result" style="display:none;">
+          <div style="display:flex; gap:10px; margin-bottom: 8px;">
+            <h4 id="predict-title" style="font-family:'Lora',serif; font-size:1.1rem; color:var(--text); margin:0;">
+            </h4>
+            <span id="predict-badge" class="chip"></span>
+          </div>
+          <p id="predict-reason"
+            style="font-size:0.83rem; color:var(--text-2); margin-bottom: 14px; background:var(--primary-pale); padding:10px; border-radius:var(--r-sm); border-left:3px solid var(--primary);">
+          </p>
+          <div style="height: 280px; width: 100%;">
+            <canvas id="predictionChart"></canvas>
+          </div>
         </div>
       </div>
 
@@ -2513,6 +2675,110 @@
         <div class="disease-grid" id="disease-grid"><!-- filled by JS --></div>
       </div>
     </div><!-- /page-advice -->
+
+    <!-- ═══ PAGE: PROFILE ═══ -->
+    <div class="page" id="page-profile">
+
+      <div class="profile-hero">
+        <div class="profile-big-avatar" id="pro-avatar">👨‍🌾</div>
+        <div class="ph-info">
+          <h2 id="pro-name">Rajan Sharma</h2>
+          <p id="pro-sub">📱 Loading… &nbsp;·&nbsp; 📍 India</p>
+          <div class="ph-badges" id="pro-badges">
+            <span class="ph-badge">🌾 Rice</span>
+            <span class="ph-badge">🗺️ 5 Acres</span>
+          </div>
+        </div>
+        <button class="ph-edit-btn" onclick="toggleEdit()">✏️ Edit Profile</button>
+      </div>
+
+      <div class="mini-stat-row" id="pro-stats">
+        <div class="mini-stat">
+          <div class="ms-val" id="ps-age">—</div>
+          <div class="ms-lbl">Age</div>
+        </div>
+        <div class="mini-stat">
+          <div class="ms-val" id="ps-roi">—</div>
+          <div class="ms-lbl">Last Year ROI</div>
+        </div>
+        <div class="mini-stat">
+          <div class="ms-val" id="ps-profit">—</div>
+          <div class="ms-lbl">Last Profit</div>
+        </div>
+        <div class="mini-stat">
+          <div class="ms-val" id="ps-qual">—</div>
+          <div class="ms-lbl">Education</div>
+        </div>
+      </div>
+
+      <div class="profile-tabs">
+        <button class="ptab active" onclick="showPTab('personal',this)">Personal</button>
+        <button class="ptab" onclick="showPTab('farm',this)">Farm Info</button>
+        <button class="ptab" onclick="showPTab('financial',this)">Financial</button>
+      </div>
+
+      <div class="ptab-panel active" id="ptp-personal">
+        <div class="card">
+          <div class="form-grid">
+            <div class="form-group"><label>First Name</label><input id="pf-fn" disabled></div>
+            <div class="form-group"><label>Last Name</label><input id="pf-ln" disabled></div>
+            <div class="form-group"><label>Mobile (read-only)</label><input id="pf-mob" disabled
+                style="background:var(--bg)"></div>
+            <div class="form-group"><label>Age</label><input id="pf-age" type="number" disabled></div>
+            <div class="form-group"><label>Gender</label><input id="pf-gen" disabled></div>
+            <div class="form-group"><label>Language</label><input id="pf-lang" disabled></div>
+            <div class="form-group"><label>Qualification</label><input id="pf-qual" disabled></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ptab-panel" id="ptp-farm">
+        <div class="card">
+          <div class="section-divider">Location</div>
+          <div class="form-grid">
+            <div class="form-group"><label>State</label><input id="pf-state" disabled></div>
+            <div class="form-group"><label>District</label><input id="pf-dist" disabled></div>
+          </div>
+          <div class="section-divider">Land & Crop</div>
+          <div class="form-grid">
+            <div class="form-group"><label>Land Size</label><input id="pf-land" type="number" disabled></div>
+            <div class="form-group"><label>Land Unit</label><input id="pf-unit" disabled></div>
+            <div class="form-group"><label>Soil Type</label><input id="pf-soil" disabled></div>
+            <div class="form-group"><label>Main Crop</label><input id="pf-crop" disabled></div>
+            <div class="form-group"><label>Water Source</label><input id="pf-water" disabled></div>
+          </div>
+          <div class="section-divider">Inputs</div>
+          <div class="form-grid">
+            <div class="form-group"><label>Fertilizer Used</label><input id="pf-fert" disabled></div>
+            <div class="form-group"><label>Pesticide Used</label><input id="pf-pest" disabled></div>
+      </div>
+    </div><!-- /page-advice -->
+
+    <!-- ═══ PAGE: SHIPMENTS ═══ -->
+    <div class="page" id="page-shipments">
+      <div class="advice-hero" style="background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);">
+        <h2>🚚 My Shipments</h2>
+        <p>Logistics and tracking for your active and past deliveries.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Active & Recent Shipments</div>
+        <div style="overflow-x:auto;">
+          <table class="price-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Crop</th>
+                <th>Quantity</th>
+                <th>Buyer</th>
+                <th>Status</th>
+                <th>ETA</th>
+              </tr>
+            </thead>
+            <tbody id="shipments-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /page-shipments -->
 
     <!-- ═══ PAGE: PROFILE ═══ -->
     <div class="page" id="page-profile">
@@ -2690,6 +2956,73 @@
       item.addEventListener('click', () => goPage(item.dataset.page));
     });
 
+
+  </main>
+
+  <!-- Toast -->
+  <div class="sf-toast" id="toast"></div>
+
+  <script>
+    /* ═══════════════════════════════════════════════════
+       SMART FARMER DASHBOARD — JavaScript
+       ═══════════════════════════════════════════════════ */
+
+    const API_BASE = 'http://localhost:5000/api';
+
+    // ── Auth ──────────────────────────────────────────
+    const Auth = {
+      getMobile() { return localStorage.getItem('farmerMobile'); },
+      getName() { return localStorage.getItem('farmerName') || 'Farmer'; },
+      logout() {
+        localStorage.removeItem('farmerMobile');
+        localStorage.removeItem('farmerName');
+        window.location.href = 'landingpage.html';
+      }
+    };
+
+    function logout() { Auth.logout(); }
+
+    // ── Toast ──────────────────────────────────────────
+    function toast(msg, type = 'green') {
+      const t = document.getElementById('toast');
+      t.className = `sf-toast ${type}`;
+      t.innerHTML = (type === 'green' ? '✅ ' : '❌ ') + msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    // ── API ───────────────────────────────────────────
+    const API = {
+      async get(path) {
+        const r = await fetch(API_BASE + path, { headers: { 'Content-Type': 'application/json' } });
+        if (!r.ok) throw new Error(`API error ${r.status}`);
+        return r.json();
+      },
+      async put(path, data) {
+        const r = await fetch(API_BASE + path, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+        return r.json();
+      }
+    };
+
+    // ── Navigation ─────────────────────────────────────
+    let currentPage = 'dashboard';
+
+    function goPage(name) {
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const navEl = document.querySelector(`[data-page="${name}"]`);
+      const pageEl = document.getElementById(`page-${name}`);
+      if (navEl) navEl.classList.add('active');
+      if (pageEl) pageEl.classList.add('active');
+      currentPage = name;
+      // Close sidebar on mobile
+      document.getElementById('sidebar').classList.remove('open');
+    }
+
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => goPage(item.dataset.page));
+    });
+
     // ── Data Loading ───────────────────────────────────
     let farmerData = null;
     let advisoryData = null;
@@ -2700,6 +3033,13 @@
 
       try {
         const { farmer, advisory } = await API.get(`/farmer/${mobile}`);
+      if (!mobile) {
+        window.location.href = 'signin.html';
+        return;
+      }
+
+      try {
+        const { farmer, advisory } = await API.get(`/farmers/${mobile}`);
         farmerData = farmer;
         advisoryData = advisory;
         populateDashboard(farmer, advisory);
@@ -2714,6 +3054,44 @@
         const { prices } = await API.get('/market-prices');
         populateMarket(prices);
       } catch { populateMarket(demoMarketPrices); }
+        console.error('Backend not connected — running in demo mode');
+        toast('Failed to load profile data', 'red');
+      }
+
+      try {
+        const rawPrices = await API.get('/mandi');
+        const formattedPrices = rawPrices.map(p => ({
+          crop: p.commodity,
+          market: parseFloat((parseFloat(p.price_per_kg) * 100).toFixed(2)),
+          msp: null,
+          unit: 'quintal',
+          trend: 'up',
+          change: 0
+        }));
+        populateMarket(formattedPrices);
+      } catch { populateMarket([]); }
+
+      try {
+        const notifs = await API.get('/notifications/farmer');
+        if (notifs && notifs.notifications) {
+          if (!advisoryData) advisoryData = { alerts: [] };
+          if (!advisoryData.alerts) advisoryData.alerts = [];
+
+          const formatNotifs = notifs.notifications.map(n => ({
+            level: n.type === 'alert' ? 'danger' : n.type === 'offer' ? 'success' : 'info',
+            icon: '🔔',
+            msg: `<strong>${n.title}</strong>: ${n.message}`
+          }));
+
+          advisoryData.alerts = [...formatNotifs, ...advisoryData.alerts];
+          populateDashboard(farmerData, advisoryData);
+        }
+      } catch (e) { console.error('Notifications fetch failed', e); }
+
+      try {
+        const shipmentRes = await API.get('/shipments');
+        populateShipments(shipmentRes.data || shipmentRes);
+      } catch (e) { populateShipments([]); console.error('Shipments fetch failed', e); }
 
       populateAdvice();
     }
@@ -2847,6 +3225,90 @@
       { crop: 'Moong Dal', msp: 8558, market: 8900, unit: 'quintal', trend: 'up', change: 2.7 },
     ];
     let allPrices = [], mktFilter = 'all', farmerCrop = '';
+    let currentChart = null; // Store chart instance
+
+    async function handlePredictPrice() {
+      const cropStr = document.getElementById('predict-crop').value.trim();
+      if (!cropStr) return toast('Please enter a crop name', 'red');
+
+      const loader = document.getElementById('predict-loader');
+      const resultDiv = document.getElementById('predict-result');
+      loader.style.display = 'block';
+      resultDiv.style.display = 'none';
+
+      try {
+        const res = await API.get(`/mandi/predict/${cropStr}`);
+        loader.style.display = 'none';
+        resultDiv.style.display = 'block';
+
+        document.getElementById('predict-title').textContent = `${cropStr} Price Forecast`;
+
+        const trendBadge = document.getElementById('predict-badge');
+        if (res.prediction.trend === 'Increase') {
+          trendBadge.className = 'chip chip-green';
+          trendBadge.textContent = '▲ ' + res.prediction.trend;
+        } else {
+          trendBadge.className = 'chip chip-red';
+          trendBadge.textContent = '▼ ' + res.prediction.trend;
+        }
+
+        document.getElementById('predict-reason').textContent = "🤖 AI Insight: " + res.prediction.reason;
+
+        const historyPrices = res.inputs.last_10_day_prices;
+        const predictedPrice = res.prediction.predicted_price;
+        const labels = historyPrices.map((_, i) => `Day ${i + 1}`);
+        labels.push('Tomorrow (Predicted)');
+
+        const dataPoints = [...historyPrices, predictedPrice];
+        const bgColors = historyPrices.map(() => 'rgba(45, 122, 58, 0.4)');
+        bgColors.push(res.prediction.trend === 'Increase' ? 'rgba(82, 192, 99, 0.9)' : 'rgba(239, 68, 68, 0.9)');
+
+        const borderColors = historyPrices.map(() => 'rgba(45, 122, 58, 1)');
+        borderColors.push(res.prediction.trend === 'Increase' ? 'rgba(82, 192, 99, 1)' : 'rgba(239, 68, 68, 1)');
+
+        const ctx = document.getElementById('predictionChart').getContext('2d');
+
+        if (currentChart) {
+          currentChart.destroy();
+        }
+
+        currentChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: `Price for ${cropStr} (₹/Qtl)`,
+              data: dataPoints,
+              backgroundColor: bgColors,
+              borderColor: borderColors,
+              borderWidth: 1,
+              borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              y: {
+                beginAtZero: false,
+                grid: { color: 'rgba(0,0,0,0.05)' }
+              },
+              x: {
+                grid: { display: false }
+              }
+            }
+          }
+        });
+
+      } catch (e) {
+        loader.style.display = 'none';
+        toast('Prediction failed. Make sure Python model is accessible.', 'red');
+        console.error(e);
+      }
+    }
 
     function populateMarket(prices) {
       allPrices = prices;
@@ -2907,6 +3369,30 @@
       <div class="mandi-row"><span>Open Days</span><span>${m.days}</span></div>
       <div class="mandi-row"><span>Commission</span><span>${m.fee}</span></div>
     </div>`).join('');
+      const mandis = [];
+      if (!mandis.length) {
+        document.getElementById('mandi-grid').innerHTML = '<div style="padding: 10px; color: var(--text-3); font-size: 0.9rem;">No nearby Mandis data available.</div>';
+        return;
+      }
+    }
+
+    // ── Shipments ──────────────────────────────────────
+    function populateShipments(data) {
+      const tbody = document.getElementById('shipments-tbody');
+      if (!data || !data.length) {
+        if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-3);padding:15px;">No active shipments found.</td></tr>';
+        return;
+      }
+      if (tbody) tbody.innerHTML = data.map(s => `
+    <tr>
+      <td>#${(s.shipmentId || s._id || s.id || '').substring(0, 8)}</td>
+      <td><strong>${s.crop || 'Crop'}</strong></td>
+      <td>${s.qty || '-'} tons</td>
+      <td>${s.buyer || 'Unknown Buyer'}</td>
+      <td><span class="chip ${String(s.status).toLowerCase() === 'delivered' ? 'chip-green' : 'chip-amber'}">${s.status || 'Pending'}</span></td>
+      <td>${s.eta ? new Date(s.eta).toLocaleDateString() : '—'}</td>
+    </tr>
+  `).join('');
     }
 
     // ── Crop Advice ────────────────────────────────────
@@ -2925,6 +3411,11 @@
       ];
 
       document.getElementById('advice-grid').innerHTML = advice.map(a => `
+      const advice = advisoryData?.advice || [];
+      if (!advice.length) {
+        document.getElementById('advice-grid').innerHTML = '<div style="padding: 10px; color: var(--text-3); font-size: 0.9rem;">Complete your farm profile to receive personalized advice.</div>';
+      } else {
+        document.getElementById('advice-grid').innerHTML = advice.map(a => `
     <div class="advice-card">
       <span class="ac-icon">${a.icon}</span>
       <div class="ac-title">${a.title}</div>
@@ -2941,11 +3432,20 @@
       };
       const diseases = diseaseDb[crop] || diseaseDb.default;
       document.getElementById('disease-grid').innerHTML = diseases.map(d => `
+      }
+
+      const crop = farmerData?.regularCrop || 'Rice';
+      const diseases = advisoryData?.diseases || [];
+      if (!diseases.length) {
+        document.getElementById('disease-grid').innerHTML = '<div style="padding: 10px; color: var(--text-3); font-size: 0.9rem;">No active disease alerts for your crop at this time.</div>';
+      } else {
+        document.getElementById('disease-grid').innerHTML = diseases.map(d => `
     <div class="disease-card">
       <div class="dis-name">⚠️ ${d.name}</div>
       <div class="dis-crop">Affects: ${crop}</div>
       <div class="dis-tip">💊 ${d.tip}</div>
     </div>`).join('');
+      }
     }
 
     // ── AI Advisor ─────────────────────────────────────

@@ -33,6 +33,12 @@ const seed = async () => {
       existingAdmin.password = await bcrypt.hash('HyperHackers...', salt);
       await existingAdmin.save();
       console.log('Admin user already exists, updated password!');
+
+        const salt = await bcrypt.genSalt(10);
+        existingAdmin.password = await bcrypt.hash('HyperHackers...', salt);
+        await existingAdmin.save();
+        console.log('Admin user already exists, updated password!');
+
     }
 
     // Seed dummy shipments if none exist

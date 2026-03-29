@@ -19,7 +19,11 @@ export const predictCropPrice = async (cropName) => {
     const inputData = {
       crop: formattedCrop,
       last_10_day_prices: historicalPrices,
+
       demand: "medium",
+
+      demand: "medium", 
+
       supply: "medium",
       rainfall: "medium",
       season: "Summer"
@@ -29,9 +33,17 @@ export const predictCropPrice = async (cropName) => {
     // The python script sits at the root directory of the project, which is two levels up from services
     const pythonScriptPath = path.resolve(__dirname, "../../price_prediction.py");
 
+
     return new Promise((resolve, reject) => {
       // Use 'python' for Windows
       const pyProcess = spawn("python", [pythonScriptPath, "--json", JSON.stringify(inputData)]);
+
+
+    
+    return new Promise((resolve, reject) => {
+      // Use 'python' for Windows
+      const pyProcess = spawn("python", [pythonScriptPath, "--json", JSON.stringify(inputData)]);
+      
 
       let stdoutData = "";
       let stderrData = "";

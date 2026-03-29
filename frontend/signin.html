@@ -169,6 +169,12 @@
                 });
 
                 const data = await response.json();
+  try {
+    const response = await fetch("http://localhost:5000/api/farmers/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ firstName, lastName, mobile })
+    });
 
                 if (response.ok) {
 
