@@ -238,73 +238,6 @@
             <button id="nextBtn" onclick="nextStep()">Next</button>
         </div>
 
-<div class="container">
-<h2>🌾 Farmer Registration</h2>
-
-<div class="stepper">
-    <div class="line"></div>
-    <div class="progress-line" id="progress"></div>
-    <div class="step active">1</div>
-    <div class="step">2</div>
-    <div class="step">3</div>
-    <div class="step">4</div>
-</div>
-
-<!-- FORM STEPS -->
-<div class="form-step active">
-    <input type="text" placeholder="First Name" id="firstName" required>
-    <input type="text" placeholder="Last Name" id="lastName" required>
-   <select id="language" required>
-    <option value="" disabled selected>Select Preferred Language</option>
-    <option value="Tamil">Tamil</option>
-    <option value="English">English</option>
-    <option value="Hindi">Hindi</option>
-</select>
-    <input type="number" placeholder="Mobile Number" id="mobile" required>
-    <input type="number" placeholder="Age" id="age" required>
-    <input type="text" placeholder="Qualification" id="qualification" required>
-    <select required id="gender">
-        <option value="" disabled selected>Gender</option>
-        <option>Male</option>
-        <option>Female</option>
-        <option>Other</option>
-    </select>
-</div>
-
-<div class="form-step">
-    <input type="text" placeholder="Country" id="country" required>
-    <input type="text" placeholder="State" id="state" required>
-    <input type="text" placeholder="District" id="district" required>
-    <input type="number" placeholder="Land Size" id="landSize" required>
-    <select required id="landUnit">
-        <option value="">Unit</option>
-        <option>Acres</option>
-        <option>Cents</option>
-    </select>
-    <select required id="Soiltype">
-        <option value="" disabled selected>Soil Type</option>
-        <option>Alluvial Soil</option>
-        <option>Red Soil</option>
-        <option>Black Soil</option>
-        <option>Laterite Soil</option>
-        <option >Sandy Soil</option>
-    </select>
-</div>
-
-<div class="form-step">
-    <input type="text" placeholder="Regular Crop" id="regularCrop" required>
-
-    <select id="livestockSelect" required>
-        <option value="">Livestock?</option>
-        <option value="yes">Yes</option>
-        <option value="no">No</option>
-    </select>
-
-    <div id="livestockFields" style="display:none;">
-        <input type="number" id="cows" placeholder="Number of Cows">
-        <input type="number" id="goats" placeholder="Number of Goats">
-        <input type="number" id="hens" placeholder="Number of Hens">
-    </div>
 
     <script>
         let currentStep = 1;
@@ -369,77 +302,6 @@
                 submitForm();
             }
         }
-    if (currentStep < 4) {
-        steps[currentStep-1].classList.add("completed");
-        steps[currentStep-1].innerHTML = "✔";
-        currentStep++;
-        updateUI();
-    } else {
-        submitForm();
-    }
-}
-
-// Back Button
-function prevStep() {
-    if (currentStep > 1) {
-        currentStep--;
-        updateUI();
-    }
-}
-
-// Submit To Backend
-async function submitForm() {
-
-    if (!validateStep()) return;
-
-    const formData = {
-        firstName: document.querySelector("#firstName")?.value,
-        lastName: document.querySelector("#lastName")?.value,
-        preferredLanguage: document.querySelector("#language")?.value,
-        mobile: document.querySelector("#mobile")?.value,
-        age: document.querySelector("#age")?.value,
-        qualification: document.querySelector("#qualification")?.value,
-        gender: document.querySelector("#gender")?.value,
-
-        country: document.querySelector("#country")?.value,
-        state: document.querySelector("#state")?.value,
-        district: document.querySelector("#district")?.value,
-        landSize: document.querySelector("#landSize")?.value,
-        landUnit: document.querySelector("#landUnit")?.value,
-        soilType: document.querySelector("#Soiltype")?.value,
-
-        regularCrop: document.querySelector("#regularCrop")?.value,
-        livestock: {
-            hasLivestock: document.querySelector("#livestockSelect")?.value === "yes",
-            cows: document.querySelector("#cows")?.value || 0,
-            goats: document.querySelector("#goats")?.value || 0,
-            hens: document.querySelector("#hens")?.value || 0
-        },
-        waterDependency: document.querySelector("#waterDependency")?.value,
-
-        previousProfit: document.querySelector("#previousProfit")?.value,
-        previousInvestment: document.querySelector("#previousInvestment")?.value,
-        fertilizer: document.querySelector("#fertilizer")?.value,
-        pesticide: document.querySelector("#pesticide")?.value,
-        subsidy: document.querySelector("#subsidy")?.value,
-        additionalBusiness: document.querySelector("#business")?.value,
-        feedback: document.querySelector("#feedback")?.value
-    };
-
-    try {
-        const response = await fetch("http://localhost:5000/api/farmers/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData)
-        });
-
-        if (response.ok) {
-            steps[3].classList.add("completed");
-            steps[3].innerHTML = "✔";
-            progress.style.width = "100%";
-            
-            // ⭐ Store identity so maindashboard loads real API data
-            localStorage.setItem("farmerMobile", formData.mobile);
 
         // Back Button
         function prevStep() {
@@ -468,7 +330,7 @@ async function submitForm() {
                 district: document.querySelector("#district")?.value,
                 landSize: document.querySelector("#landSize")?.value,
                 landUnit: document.querySelector("#landUnit")?.value,
-                soilType: document.querySelector("#soilType")?.value,
+                soilType: document.querySelector("#Soiltype")?.value || document.querySelector("#soilType")?.value,
 
                 regularCrop: document.querySelector("#regularCrop")?.value,
                 livestock: {
@@ -479,8 +341,8 @@ async function submitForm() {
                 },
                 waterDependency: document.querySelector("#waterDependency")?.value,
 
-                previousProfit: document.querySelector("#profit")?.value,
-                previousInvestment: document.querySelector("#investment")?.value,
+                previousProfit: document.querySelector("#previousProfit")?.value || document.querySelector("#profit")?.value,
+                previousInvestment: document.querySelector("#previousInvestment")?.value || document.querySelector("#investment")?.value,
                 fertilizer: document.querySelector("#fertilizer")?.value,
                 pesticide: document.querySelector("#pesticide")?.value,
                 subsidy: document.querySelector("#subsidy")?.value,
@@ -489,7 +351,7 @@ async function submitForm() {
             };
 
             try {
-                const response = await fetch("http://localhost:5000/register", {
+                const response = await fetch("http://localhost:5000/api/farmers/register", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(formData)
@@ -499,6 +361,9 @@ async function submitForm() {
                     steps[3].classList.add("completed");
                     steps[3].innerHTML = "✔";
                     progress.style.width = "100%";
+                    
+                    // ⭐ Store identity so maindashboard loads real API data
+                    localStorage.setItem("farmerMobile", formData.mobile);
 
                     window.location.href = "maindashboard.html";
                 } else {
