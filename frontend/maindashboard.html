@@ -970,39 +970,46 @@ function populateAdvice() {
 async function askAI() {
   const q = document.getElementById('ai-q').value.trim();
   if (!q) return;
-  const btn  = document.getElementById('ai-btn');
+
+  const btn = document.getElementById('ai-btn');
   const resp = document.getElementById('ai-resp');
-  btn.disabled  = true;
+
+  btn.disabled = true;
   btn.textContent = '…';
   resp.className = 'ai-resp show';
   resp.innerHTML = '<em>Thinking…</em>';
 
-  const ctx = farmerData
+  const ctx = farmerData 
     ? `Farmer ${farmerData.firstName} from ${farmerData.state}, India. Crop: ${farmerData.regularCrop}. Soil: ${farmerData.soilType}. Land: ${farmerData.landSize} ${farmerData.landUnit}. Water: ${farmerData.waterSource}. Fertilizer: ${farmerData.fertilizerUsed}.`
     : 'Indian farmer.';
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 500,
-        system: `You are an expert agricultural advisor for Indian farmers. Context: ${ctx} Give practical advice in 2–4 sentences with specific quantities and timings.`,
-        messages: [{ role: 'user', content: q }]
+    const res = await fetch("http://127.0.0.1:5000/ask", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ 
+        question: q + " " + ctx   // 👈 sends farmer context also
       })
     });
+
     const data = await res.json();
-    resp.innerHTML = '<strong>🤖 Advisor:</strong> ' + (data.content?.[0]?.text || 'Could not get response.');
-  } catch {
-    resp.innerHTML = '❌ Could not connect to AI. Please try again.';
+
+    resp.innerHTML = '<strong>🤖 Advisor:</strong> ' + (data.response || 'No response');
+
+  } catch (error) {
+    resp.innerHTML = '❌ Could not connect to server';
+    console.error(error);
   } finally {
-    btn.disabled    = false;
+    btn.disabled = false;
     btn.textContent = 'Ask →';
   }
 }
-document.getElementById('ai-q').addEventListener('keydown', e => { if (e.key === 'Enter') askAI(); });
 
+document.getElementById('ai-q').addEventListener('keydown', e => {
+  if (e.key === 'Enter') askAI();
+});
 // ── Profile ───────────────────────────────────
 function populateProfile(f, adv) {
   document.getElementById('pro-name').textContent   = `${f.firstName} ${f.lastName}`;
