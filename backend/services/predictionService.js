@@ -37,12 +37,6 @@ export const predictCropPrice = async (cropName) => {
     return new Promise((resolve, reject) => {
       // Use 'python' for Windows
       const pyProcess = spawn("python", [pythonScriptPath, "--json", JSON.stringify(inputData)]);
-
-
-    
-    return new Promise((resolve, reject) => {
-      // Use 'python' for Windows
-      const pyProcess = spawn("python", [pythonScriptPath, "--json", JSON.stringify(inputData)]);
       
 
       let stdoutData = "";

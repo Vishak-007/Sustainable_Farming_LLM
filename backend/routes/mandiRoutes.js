@@ -9,11 +9,6 @@ router.get("/", async (req, res) => {
     const data = await getMandiPrices();
 
     res.json(data);
-router.get("/", async (req,res)=>{
-
- const data = await getMandiPrices();
-
- res.json(data);
 
 
 });
@@ -27,12 +22,6 @@ router.get("/predict/:crop", async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 
- try {
-  const result = await predictCropPrice(req.params.crop);
-  res.json(result);
- } catch (err) {
-  res.status(500).json({ error: err.message });
- }
 
 });
 
