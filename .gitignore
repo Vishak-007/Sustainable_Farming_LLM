@@ -11,3 +11,6 @@ __pycache__/
 # Local Config & Agent
 .vscode/
 .gemini/
+
+package-lock.json
+package.json
