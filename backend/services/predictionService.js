@@ -22,8 +22,6 @@ export const predictCropPrice = async (cropName) => {
 
       demand: "medium",
 
-      demand: "medium", 
-
       supply: "medium",
       rainfall: "medium",
       season: "Summer"
