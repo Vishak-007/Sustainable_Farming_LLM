@@ -244,21 +244,10 @@ function populateDashboard(f, adv) {
       <div class="crop-pct" style="color:${c.textColor}">${c.pct}%</div>
     </div>`).join('');
 }
-const OPENWEATHER_KEY = '76cc4bba4d6e5e52706738c842dfa0ce';
-
 async function loadWeather(lat, lon) {
   try {
-    // Current weather
-    const curr = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_KEY}&units=metric`
-    ).then(r => r.json());
-
-    // 5-day forecast
-    const fore = await fetch(
-      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_KEY}&units=metric&cnt=5`
-    ).then(r => r.json());
-
-    updateWeatherUI(curr, fore);
+    const data = await API.get(`/weather?lat=${lat}&lon=${lon}`);
+    updateWeatherUI(data.current, data.forecast);
   } catch (e) {
     console.warn('Weather fetch failed', e);
   }
