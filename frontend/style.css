@@ -734,3 +734,42 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);disp
   border-radius: var(--r-xs); align-items: center; justify-content: center;
   cursor: pointer; font-size: 1.1rem; color: var(--text-2);
 }
+
+/* ── Modal Styles ── */
+.sf-modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(12, 28, 17, 0.65);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden; transition: all 0.3s ease;
+}
+.sf-modal-overlay.show { opacity: 1; visibility: visible; }
+.sf-modal {
+  background: #fff;
+  border-radius: var(--r-md);
+  width: 90%; max-width: 500px;
+  padding: 30px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+  transform: translateY(20px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.sf-modal-overlay.show .sf-modal { transform: translateY(0) scale(1); }
+.sf-modal h3 { margin: 0 0 10px 0; font-family: 'Lora', serif; font-size: 1.5rem; color: var(--text); }
+.sf-modal p { margin: 0 0 20px 0; color: var(--text-2); font-size: 0.95rem; line-height: 1.5; }
+.sf-modal-btn-group { display: flex; gap: 12px; margin-top: 24px; }
+.sf-modal .form-group { margin-bottom: 12px; }
+.sf-modal select, .sf-modal input {
+  width: 100%; padding: 12px; border: 1.5px solid var(--border);
+  border-radius: var(--r-sm); font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem; outline: none; transition: border 0.2s;
+}
+.sf-modal select:focus, .sf-modal input:focus { border-color: var(--primary); }
+.crop-rec-result {
+  background: var(--surface);
+  border: 1.5px solid var(--primary-pale);
+  border-radius: var(--r-sm); padding: 20px;
+  text-align: center; margin-top: 15px;
+}
+.rec-crop-name { font-family: 'Lora', serif; font-size: 1.8rem; color: var(--primary); margin: 10px 0; font-weight: 700; text-transform: capitalize; }
+.rec-chip { display: inline-block; padding: 4px 10px; background: var(--primary-pale); color: var(--primary-dark); border-radius: 99px; font-size: 0.75rem; font-weight: 700; margin-top: 5px; }
