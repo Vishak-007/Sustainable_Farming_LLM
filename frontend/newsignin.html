@@ -187,7 +187,7 @@
                 <option>Acres</option>
                 <option>Cents</option>
             </select>
-            <select required id="gender">
+            <select required id="soilType">
                 <option value="" disabled selected>Soil Type</option>
                 <option>Alluvial Soil</option>
                 <option>Red Soil</option>
@@ -364,6 +364,7 @@
                     
                     // ⭐ Store identity so maindashboard loads real API data
                     localStorage.setItem("farmerMobile", formData.mobile);
+                    sessionStorage.setItem("triggerSignupPrompt", "true");
 
                     window.location.href = "maindashboard.html";
                 } else {

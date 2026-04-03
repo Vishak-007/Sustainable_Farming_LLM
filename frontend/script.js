@@ -8,7 +8,8 @@ const Auth = {
   logout() {
     localStorage.removeItem('farmerMobile');
     localStorage.removeItem('farmerName');
-    window.location.href = 'landingpage.html';
+    sessionStorage.removeItem('cropPromptV2');
+    window.location.href = 'landing-page.html';
   }
 };
 
@@ -141,6 +142,7 @@ if (navigator.geolocation) {
 } else {
   loadWeather(20.0, 73.8); 
 }
+setTimeout(checkCropPrompt, 500);
 }
 
 // ── Demo Data ─────────────────────────────────
@@ -664,6 +666,112 @@ async function saveProfile() {
     populateDashboard(farmerData, advisoryData);
     populateFarm(farmerData);
   } catch { toast('Failed to save', 'red'); }
+}
+
+// ── Crop Recommendation Modal ──
+function checkCropPrompt() {
+  const trigger = sessionStorage.getItem('triggerSignupPrompt');
+  if (trigger) {
+    showCropModal();
+  }
+}
+
+function showCropModal() {
+  const modal = document.getElementById('crop-prompt-modal');
+  if (modal) modal.classList.add('show');
+  sessionStorage.removeItem('triggerSignupPrompt');
+}
+
+function closeCropModal() {
+  const modal = document.getElementById('crop-prompt-modal');
+  if (modal) modal.classList.remove('show');
+  setTimeout(() => {
+    document.getElementById('modal-step-prompt').style.display = 'block';
+    document.getElementById('modal-step-form').style.display = 'none';
+    document.getElementById('modal-step-result').style.display = 'none';
+  }, 300);
+}
+
+function showRecForm() {
+  document.getElementById('modal-step-prompt').style.display = 'none';
+  document.getElementById('modal-step-form').style.display = 'block';
+  if (farmerData) {
+    if (farmerData.soilType) {
+      const soilOpt = Array.from(document.getElementById('rec-soil').options).find(o => o.value.includes(farmerData.soilType));
+      if(soilOpt) soilOpt.selected = true;
+    }
+    if (farmerData.waterSource) {
+      const wOpt = Array.from(document.getElementById('rec-water').options).find(o => o.value.toLowerCase().includes(farmerData.waterSource.toLowerCase()));
+      if(wOpt) wOpt.selected = true;
+    }
+  }
+}
+
+let currentRecommendation = null;
+
+async function fetchCropRecommendation() {
+  const btn = document.getElementById('rec-submit-btn');
+  btn.textContent = 'Thinking...';
+  btn.disabled = true;
+
+  const reqData = {
+    soilType: document.getElementById('rec-soil').value,
+    waterSource: document.getElementById('rec-water').value,
+    season: document.getElementById('rec-season').value
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/cropRecommendation/recommend`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reqData)
+    });
+    
+    if (!res.ok) throw new Error('Failed to get recommendation');
+    
+    const data = await res.json();
+    currentRecommendation = data.recommendation;
+
+    document.getElementById('modal-step-form').style.display = 'none';
+    document.getElementById('modal-step-result').style.display = 'block';
+
+    document.getElementById('rec-msg').textContent = data.message;
+    document.getElementById('rec-res-name').textContent = currentRecommendation.crop;
+    document.getElementById('rec-res-profit').textContent = currentRecommendation.profit_level + ' Profit';
+    document.getElementById('rec-res-risk').textContent = currentRecommendation.risk_level + ' Risk';
+    
+    const dur = currentRecommendation.duration_days;
+    document.getElementById('rec-res-duration').textContent = `${dur[0]}-${dur[1]} Days`;
+
+  } catch (err) {
+    console.error(err);
+    toast('Error fetching recommendation', 'red');
+  } finally {
+    btn.textContent = 'Get Recommendation';
+    btn.disabled = false;
+  }
+}
+
+async function acceptRecommendation() {
+  if (!currentRecommendation) return;
+  const cropName = currentRecommendation.crop;
+  
+  if (farmerData) {
+    farmerData.regularCrop = cropName;
+    try {
+      const mobile = Auth.getMobile();
+      if (mobile) {
+        await API.put(`/farmers/${mobile}`, { regularCrop: cropName });
+      }
+      toast('Crop selected and profile updated!');
+      populateDashboard(farmerData, advisoryData);
+      populateFarm(farmerData);
+      populateProfile(farmerData, advisoryData);
+    } catch {
+      toast('Failed to save to profile, but applying locally for now', 'red');
+    }
+  }
+  closeCropModal();
 }
 
 // ── Init ──────────────────────────────────────

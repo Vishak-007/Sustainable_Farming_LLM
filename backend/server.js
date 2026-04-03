@@ -11,6 +11,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 
 import farmerRoutes from "./routes/farmerRoutes.js";
 import weatherRoutes from "./routes/weatherRoutes.js";
+import cropRecommendationRoutes from "./routes/cropRecommendation.js";
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/agrofarmer
 
 app.use("/api/farmers", farmerRoutes);
 app.use("/api/weather", weatherRoutes);
+app.use("/api/cropRecommendation", cropRecommendationRoutes);
 
 
 mongoose.connect(MONGO_URI)
