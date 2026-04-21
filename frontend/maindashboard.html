@@ -9,7 +9,56 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Inline Modal CSS to prevent browser caching issues */
+    /* ── Crop Selector Cards ── */
+    .crop-selector-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .crop-sel-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 10px 16px;
+      border: 2px solid var(--border, #ddd);
+      border-radius: 10px;
+      cursor: pointer;
+      background: var(--surface, #f8faf8);
+      transition: all 0.2s ease;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-2, #444);
+      min-width: 80px;
+      user-select: none;
+    }
+    .crop-sel-card:hover {
+      border-color: var(--primary, #2d7a3a);
+      background: var(--primary-pale, #edf7ee);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(45,122,58,0.15);
+    }
+    .crop-sel-card.selected {
+      border-color: var(--primary, #2d7a3a);
+      background: var(--primary-pale, #edf7ee);
+      color: var(--primary, #2d7a3a);
+      box-shadow: 0 4px 12px rgba(45,122,58,0.2);
+    }
+    .crop-sel-card.yours-badge::after {
+      content: 'Your Crop';
+      display: block;
+      font-size: 0.65rem;
+      font-weight: 800;
+      background: var(--primary, #2d7a3a);
+      color: #fff;
+      padding: 1px 6px;
+      border-radius: 99px;
+      margin-top: 2px;
+    }
+    .crop-sel-emoji { font-size: 1.5rem; }
+    /* ── Inline Modal CSS to prevent browser caching issues ── */
     .sf-modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(12, 28, 17, 0.65);
@@ -348,10 +397,19 @@
 
     <div class="card" style="margin-bottom:16px;">
       <div class="card-title">🤖 AI Price Prediction Monitor</div>
-      <div style="display:flex;gap:10px;margin-bottom:14px;">
-        <input type="text" id="predict-crop" placeholder="Enter crop (e.g. Wheat, Rice, Potato)" class="ai-inp" style="max-width:280px;">
-        <button class="btn btn-primary" onclick="handlePredictPrice()">Forecast Price</button>
+      <p style="font-size:.82rem;color:var(--text-3);margin-bottom:10px;">Select a crop below to forecast its next-day market price using our ML model.</p>
+      <div class="crop-selector-row" id="crop-sel-row">
+        <div class="crop-sel-card" id="csel-Wheat"   onclick="selectCropCard('Wheat')"  ><span class="crop-sel-emoji">🌾</span>Wheat</div>
+        <div class="crop-sel-card" id="csel-Rice"    onclick="selectCropCard('Rice')"   ><span class="crop-sel-emoji">🌾</span>Rice</div>
+        <div class="crop-sel-card" id="csel-Tomato"  onclick="selectCropCard('Tomato')" ><span class="crop-sel-emoji">🍅</span>Tomato</div>
+        <div class="crop-sel-card" id="csel-Onion"   onclick="selectCropCard('Onion')"  ><span class="crop-sel-emoji">🧅</span>Onion</div>
+        <div class="crop-sel-card" id="csel-Potato"  onclick="selectCropCard('Potato')" ><span class="crop-sel-emoji">🥔</span>Potato</div>
       </div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;">
+        <span id="predict-crop-label" style="flex:1;font-size:.9rem;color:var(--text-2);font-weight:600;">No crop selected</span>
+        <button class="btn btn-primary" id="predict-btn" onclick="handlePredictPrice()" disabled>📈 Forecast Price</button>
+      </div>
+      <input type="hidden" id="predict-crop">
       <div id="predict-loader" style="display:none;">⏳ Analyzing historical data and running ML model…</div>
       <div id="predict-result" style="display:none;">
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;">

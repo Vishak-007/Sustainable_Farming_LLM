@@ -84,9 +84,11 @@ async function loadAll() {
       populateDashboard(farmerData, advisoryData);
       populateFarm(farmerData);
       populateProfile(farmerData, advisoryData);
+      highlightFarmerCrop();
     } catch (e) {
       console.warn('Backend not connected — running in demo mode', e);
       loadDemoData();
+      highlightFarmerCrop();
     }
 
     // Fetch notifications (non-fatal)
@@ -113,21 +115,34 @@ async function loadAll() {
     }
   }
 
-  // Market prices (non-fatal, always runs)
+  // Market prices – always shows a full table (live data merged with demo fallback)
+  // ------------------------------------------------------------------
   try {
     const rawPrices = await API.get('/mandi');
-    const formatted = rawPrices.map(p => ({
-      crop: p.commodity,
-      market: parseFloat((parseFloat(p.price_per_kg) * 100).toFixed(2)),
-      msp: null,
-      unit: 'quintal',
-      trend: 'up',
-      change: 0
-    }));
-    populateMarket(formatted);
+    if (rawPrices && rawPrices.length > 0) {
+      const formatted = rawPrices.map(p => {
+        const livePrice = parseFloat((parseFloat(p.price_per_kg) * 100).toFixed(2));
+        const cropKey   = (p.commodity || '').toLowerCase();
+        const demoMatch = demoMarketPrices.find(d => cropKey.includes(d.crop.toLowerCase()));
+        return {
+          crop:   p.commodity,
+          market: livePrice || (demoMatch ? demoMatch.market : livePrice),
+          msp:    demoMatch ? demoMatch.msp    : null,
+          unit:   'quintal',
+          trend:  demoMatch ? demoMatch.trend  : 'up',
+          change: demoMatch ? demoMatch.change : 0
+        };
+      });
+      const liveCropNames = new Set(formatted.map(f => f.crop.toLowerCase()));
+      const missingDemo   = demoMarketPrices.filter(d => !liveCropNames.has(d.crop.toLowerCase()));
+      populateMarket([...formatted, ...missingDemo]);
+    } else {
+      populateMarket(demoMarketPrices);
+    }
   } catch {
     populateMarket(demoMarketPrices);
   }
+
 
   populateAdvice();
   // Get location from farmer data or browser geolocation
@@ -436,14 +451,59 @@ function renderMandis() {
 }
 
 // ── Price Prediction ──────────────────────────
+
+// Crops supported by the Python ML model
+const ML_CROPS = ['Wheat', 'Rice', 'Tomato', 'Onion', 'Potato'];
+
+/**
+ * Called when user clicks a crop card in the AI Price Prediction section.
+ * Highlights the selected card, stores the name in the hidden input,
+ * and enables the Forecast button.
+ */
+function selectCropCard(cropName) {
+  // Deselect all
+  ML_CROPS.forEach(c => {
+    const el = document.getElementById(`csel-${c}`);
+    if (el) el.classList.remove('selected');
+  });
+  // Select clicked
+  const sel = document.getElementById(`csel-${cropName}`);
+  if (sel) sel.classList.add('selected');
+
+  document.getElementById('predict-crop').value = cropName;
+  const label = document.getElementById('predict-crop-label');
+  if (label) label.textContent = `Selected: ${cropName}`;
+
+  const btn = document.getElementById('predict-btn');
+  if (btn) btn.disabled = false;
+}
+
+/**
+ * After farmer data loads, auto-highlight the farmer's own crop
+ * if it is one of the 5 ML-supported crops.
+ */
+function highlightFarmerCrop() {
+  const crop = farmerData?.regularCrop || '';
+  const match = ML_CROPS.find(c => c.toLowerCase() === crop.toLowerCase());
+  ML_CROPS.forEach(c => {
+    const el = document.getElementById(`csel-${c}`);
+    if (el) {
+      el.classList.remove('yours-badge');
+      if (c === match) el.classList.add('yours-badge');
+    }
+  });
+}
+
 async function handlePredictPrice() {
   const cropStr = document.getElementById('predict-crop').value.trim();
-  if (!cropStr) { toast('Please enter a crop name', 'red'); return; }
+  if (!cropStr) { toast('Please select a crop first', 'red'); return; }
 
   const loader    = document.getElementById('predict-loader');
   const resultDiv = document.getElementById('predict-result');
+  const btn       = document.getElementById('predict-btn');
   loader.style.display    = 'block';
   resultDiv.style.display = 'none';
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Forecasting…'; }
 
   try {
     const res = await API.get(`/mandi/predict/${encodeURIComponent(cropStr)}`);
@@ -463,36 +523,69 @@ async function handlePredictPrice() {
 
     const historyPrices  = res.inputs.last_10_day_prices;
     const predictedPrice = res.prediction.predicted_price;
-    const labels         = historyPrices.map((_, i) => `Day ${i + 1}`);
-    labels.push('Tomorrow (Predicted)');
-    const dataPoints  = [...historyPrices, predictedPrice];
-    const bgColors    = historyPrices.map(() => 'rgba(45,122,58,0.4)');
+
+    // Build real calendar date labels: Day 1 = 10 days ago, Day 10 = yesterday
+    const today     = new Date();
+    const dateLabels = historyPrices.map((_, i) => {
+      const d = new Date(today);
+      d.setDate(today.getDate() - (10 - i));      // 10 days ago → yesterday
+      return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+    });
+    dateLabels.push('Tomorrow\n(Predicted)');
+
+    const dataPoints   = [...historyPrices, predictedPrice];
+    const bgColors     = historyPrices.map(() => 'rgba(45,122,58,0.45)');
     const borderColors = historyPrices.map(() => 'rgba(45,122,58,1)');
-    bgColors.push(res.prediction.trend === 'Increase' ? 'rgba(82,192,99,0.9)' : 'rgba(239,68,68,0.9)');
-    borderColors.push(res.prediction.trend === 'Increase' ? 'rgba(82,192,99,1)' : 'rgba(239,68,68,1)');
+    const isUp = res.prediction.trend === 'Increase';
+    bgColors.push(isUp ? 'rgba(82,192,99,0.9)' : 'rgba(239,68,68,0.9)');
+    borderColors.push(isUp ? 'rgba(82,192,99,1)' : 'rgba(239,68,68,1)');
 
     if (currentChart) { currentChart.destroy(); currentChart = null; }
     const ctx = document.getElementById('predictionChart').getContext('2d');
     currentChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels,
-        datasets: [{ label: `Price for ${cropStr} (₹/Qtl)`, data: dataPoints, backgroundColor: bgColors, borderColor: borderColors, borderWidth: 1, borderRadius: 4 }]
+        labels: dateLabels,
+        datasets: [{
+          label: `${cropStr} Price (₹/kg)`,
+          data:  dataPoints,
+          backgroundColor: bgColors,
+          borderColor:     borderColors,
+          borderWidth: 1.5,
+          borderRadius: 5
+        }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => ` ₹${ctx.parsed.y.toFixed(2)} / kg`
+            }
+          }
+        },
         scales: {
-          y: { beginAtZero: false, grid: { color: 'rgba(0,0,0,0.05)' } },
-          x: { grid: { display: false } }
+          y: {
+            beginAtZero: false,
+            grid: { color: 'rgba(0,0,0,0.05)' },
+            ticks: { callback: v => '₹' + v.toFixed(1) }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { maxRotation: 45, font: { size: 10 } }
+          }
         }
       }
     });
+
   } catch (e) {
     loader.style.display = 'none';
     toast('Prediction failed. Make sure the Python model is accessible.', 'red');
     console.error(e);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '📈 Forecast Price'; }
   }
 }
 
@@ -561,7 +654,7 @@ async function askAI() {
     : 'Indian farmer.';
 
   try {
-    const res = await fetch("http://127.0.0.1:5000/ask", {
+    const res = await fetch("http://127.0.0.1:5001/ask", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
