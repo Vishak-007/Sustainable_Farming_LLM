@@ -1,4 +1,4 @@
-
+﻿
 const API_BASE = 'http://localhost:5000/api';
 
 // ── Auth ──────────────────────────────────────
@@ -19,7 +19,7 @@ function logout() { Auth.logout(); }
 function toast(msg, type = 'green') {
   const t = document.getElementById('toast');
   t.className = `sf-toast ${type}`;
-  t.innerHTML = (type === 'green' ? '✅ ' : '❌ ') + msg;
+  t.innerHTML = (type === 'green' ? '✅ ' : 'âŒ ') + msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3500);
 }
@@ -84,9 +84,11 @@ async function loadAll() {
       populateDashboard(farmerData, advisoryData);
       populateFarm(farmerData);
       populateProfile(farmerData, advisoryData);
+      highlightFarmerCrop();
     } catch (e) {
       console.warn('Backend not connected — running in demo mode', e);
       loadDemoData();
+      highlightFarmerCrop();
     }
 
     // Fetch notifications (non-fatal)
@@ -113,21 +115,34 @@ async function loadAll() {
     }
   }
 
-  // Market prices (non-fatal, always runs)
+  // Market prices – always shows a full table (live data merged with demo fallback)
+  // ------------------------------------------------------------------
   try {
     const rawPrices = await API.get('/mandi');
-    const formatted = rawPrices.map(p => ({
-      crop: p.commodity,
-      market: parseFloat((parseFloat(p.price_per_kg) * 100).toFixed(2)),
-      msp: null,
-      unit: 'quintal',
-      trend: 'up',
-      change: 0
-    }));
-    populateMarket(formatted);
+    if (rawPrices && rawPrices.length > 0) {
+      const formatted = rawPrices.map(p => {
+        const livePrice = parseFloat((parseFloat(p.price_per_kg) * 100).toFixed(2));
+        const cropKey   = (p.commodity || '').toLowerCase();
+        const demoMatch = demoMarketPrices.find(d => cropKey.includes(d.crop.toLowerCase()));
+        return {
+          crop:   p.commodity,
+          market: livePrice || (demoMatch ? demoMatch.market : livePrice),
+          msp:    demoMatch ? demoMatch.msp    : null,
+          unit:   'quintal',
+          trend:  demoMatch ? demoMatch.trend  : 'up',
+          change: demoMatch ? demoMatch.change : 0
+        };
+      });
+      const liveCropNames = new Set(formatted.map(f => f.crop.toLowerCase()));
+      const missingDemo   = demoMarketPrices.filter(d => !liveCropNames.has(d.crop.toLowerCase()));
+      populateMarket([...formatted, ...missingDemo]);
+    } else {
+      populateMarket(demoMarketPrices);
+    }
   } catch {
     populateMarket(demoMarketPrices);
   }
+
 
   populateAdvice();
   // Get location from farmer data or browser geolocation
@@ -167,13 +182,13 @@ function loadDemoData() {
       { type: 'irrigation', icon: '💧', title: 'Irrigation Advice', body: 'Borewell available — use drip or sprinkler irrigation to save water. Monitor water table levels regularly.' },
       { type: 'soil', icon: '🌱', title: 'Soil Management', body: 'Black soil retains moisture well. Avoid waterlogging. Ideal for cotton and sorghum. Add lime if pH < 6.' },
       { type: 'season', icon: '📅', title: 'Seasonal Advisory', body: 'Rabi season (Nov–Apr): Ideal time for wheat, mustard, chickpea, barley. Irrigate at critical stages.' },
-      { type: 'livestock', icon: '🐄', title: 'Livestock Integration', body: 'You have 28 animals. Use animal waste as organic manure — reduces fertilizer costs by 30–40%.' },
+      { type: 'livestock', icon: 'ðŸ„', title: 'Livestock Integration', body: 'You have 28 animals. Use animal waste as organic manure — reduces fertilizer costs by 30–40%.' },
       { type: 'finance', icon: '💰', title: 'Financial Health', body: 'Your ROI is 88.9%. Excellent! Consider reinvesting in better irrigation equipment or expanding land area.' },
     ],
     alerts: [
-      { level: 'info',    icon: 'ℹ️',  msg: 'PM-KISAN enrolled — next installment due in March.' },
+      { level: 'info',    icon: 'ℹï¸',  msg: 'PM-KISAN enrolled — next installment due in March.' },
       { level: 'success', icon: '✅',  msg: 'Wheat crop matured — ready for harvest this week!' },
-      { level: 'warn',    icon: '⚠️', msg: 'Heavy rain expected in 2 days — avoid pesticide spraying.' },
+      { level: 'warn',    icon: '⚠ï¸', msg: 'Heavy rain expected in 2 days — avoid pesticide spraying.' },
     ],
     diseases: [
       { name: 'Blast Disease',    tip: 'Spray Tricyclazole 0.1% at tillering. Avoid excess nitrogen.' },
@@ -191,10 +206,10 @@ function loadDemoData() {
 // ── Dashboard ─────────────────────────────────
 function populateDashboard(f, adv) {
   document.getElementById('sf-name').textContent = `${f.firstName} ${f.lastName}`;
-  document.getElementById('sf-loc').textContent  = `📍 ${[f.district, f.state].filter(Boolean).join(', ') || 'India'}`;
+  document.getElementById('sf-loc').textContent  = `ðŸ“ ${[f.district, f.state].filter(Boolean).join(', ') || 'India'}`;
   document.getElementById('d-landsize').textContent = f.landSize ? `${f.landSize} ${f.landUnit}` : '—';
   document.getElementById('d-crop').textContent = f.regularCrop || '—';
-  document.getElementById('d-farmname').textContent = `${f.firstName}'s Farm ✏️`;
+  document.getElementById('d-farmname').textContent = `${f.firstName}'s Farm âœï¸`;
 
   // Season on farm card
   const seasons = { kharif: 'Kharif', rabi: 'Rabi', zaid: 'Zaid' };
@@ -256,13 +271,13 @@ async function loadWeather(lat, lon) {
 }
 
 function getWeatherEmoji(code) {
-  if (code >= 200 && code < 300) return '⛈️';
-  if (code >= 300 && code < 400) return '🌦️';
-  if (code >= 500 && code < 600) return '🌧️';
-  if (code >= 600 && code < 700) return '❄️';
-  if (code === 800) return '☀️';
+  if (code >= 200 && code < 300) return '⛈ï¸';
+  if (code >= 300 && code < 400) return '🌦ï¸';
+  if (code >= 500 && code < 600) return '🌧ï¸';
+  if (code >= 600 && code < 700) return 'â„ï¸';
+  if (code === 800) return '☀ï¸';
   if (code === 801 || code === 802) return '⛅';
-  return '☁️';
+  return 'â˜ï¸';
 }
 
 function updateWeatherUI(curr, fore) {
@@ -296,7 +311,7 @@ function populateFarm(f) {
   const waterLabels = { rainfed: 'Rainfed', borewell: 'Borewell', canal: 'Canal Irrigation', river: 'River', tank: 'Tank/Pond', mixed: 'Mixed' };
 
   setText('fdh-name', `${f.firstName || 'My'} Farm`);
-  setText('fdh-sub', `${[f.district, f.state].filter(Boolean).join(', ') || 'India'} · ${f.landSize} ${f.landUnit}`);
+  setText('fdh-sub', `${[f.district, f.state].filter(Boolean).join(', ') || 'India'} Â· ${f.landSize} ${f.landUnit}`);
   document.getElementById('fdh-crop').textContent  = f.regularCrop || 'Crop';
   document.getElementById('fdh-land').textContent  = `${f.landSize} ${f.landUnit}`;
   document.getElementById('fdh-state').textContent = f.state || 'India';
@@ -427,8 +442,8 @@ function renderMandis() {
   ];
   document.getElementById('mandi-grid').innerHTML = mandis.map(m => `
     <div class="mandi-card">
-      <div class="mandi-name">🏪 ${m.name}</div>
-      <div class="mandi-dist">📍 ${m.dist} away</div>
+      <div class="mandi-name">ðŸª ${m.name}</div>
+      <div class="mandi-dist">ðŸ“ ${m.dist} away</div>
       <div class="mandi-row"><span>Timing</span><span>${m.open}</span></div>
       <div class="mandi-row"><span>Open Days</span><span>${m.days}</span></div>
       <div class="mandi-row"><span>Commission</span><span>${m.fee}</span></div>
@@ -436,14 +451,59 @@ function renderMandis() {
 }
 
 // ── Price Prediction ──────────────────────────
+
+// Crops supported by the Python ML model
+const ML_CROPS = ['Wheat', 'Rice', 'Tomato', 'Onion', 'Potato'];
+
+/**
+ * Called when user clicks a crop card in the AI Price Prediction section.
+ * Highlights the selected card, stores the name in the hidden input,
+ * and enables the Forecast button.
+ */
+function selectCropCard(cropName) {
+  // Deselect all
+  ML_CROPS.forEach(c => {
+    const el = document.getElementById(`csel-${c}`);
+    if (el) el.classList.remove('selected');
+  });
+  // Select clicked
+  const sel = document.getElementById(`csel-${cropName}`);
+  if (sel) sel.classList.add('selected');
+
+  document.getElementById('predict-crop').value = cropName;
+  const label = document.getElementById('predict-crop-label');
+  if (label) label.textContent = `Selected: ${cropName}`;
+
+  const btn = document.getElementById('predict-btn');
+  if (btn) btn.disabled = false;
+}
+
+/**
+ * After farmer data loads, auto-highlight the farmer's own crop
+ * if it is one of the 5 ML-supported crops.
+ */
+function highlightFarmerCrop() {
+  const crop = farmerData?.regularCrop || '';
+  const match = ML_CROPS.find(c => c.toLowerCase() === crop.toLowerCase());
+  ML_CROPS.forEach(c => {
+    const el = document.getElementById(`csel-${c}`);
+    if (el) {
+      el.classList.remove('yours-badge');
+      if (c === match) el.classList.add('yours-badge');
+    }
+  });
+}
+
 async function handlePredictPrice() {
   const cropStr = document.getElementById('predict-crop').value.trim();
-  if (!cropStr) { toast('Please enter a crop name', 'red'); return; }
+  if (!cropStr) { toast('Please select a crop first', 'red'); return; }
 
   const loader    = document.getElementById('predict-loader');
   const resultDiv = document.getElementById('predict-result');
+  const btn       = document.getElementById('predict-btn');
   loader.style.display    = 'block';
   resultDiv.style.display = 'none';
+  if (btn) { btn.disabled = true; btn.textContent = 'â³ Forecasting…'; }
 
   try {
     const res = await API.get(`/mandi/predict/${encodeURIComponent(cropStr)}`);
@@ -463,36 +523,69 @@ async function handlePredictPrice() {
 
     const historyPrices  = res.inputs.last_10_day_prices;
     const predictedPrice = res.prediction.predicted_price;
-    const labels         = historyPrices.map((_, i) => `Day ${i + 1}`);
-    labels.push('Tomorrow (Predicted)');
-    const dataPoints  = [...historyPrices, predictedPrice];
-    const bgColors    = historyPrices.map(() => 'rgba(45,122,58,0.4)');
+
+    // Build real calendar date labels: Day 1 = 10 days ago, Day 10 = yesterday
+    const today     = new Date();
+    const dateLabels = historyPrices.map((_, i) => {
+      const d = new Date(today);
+      d.setDate(today.getDate() - (10 - i));      // 10 days ago → yesterday
+      return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+    });
+    dateLabels.push('Tomorrow\n(Predicted)');
+
+    const dataPoints   = [...historyPrices, predictedPrice];
+    const bgColors     = historyPrices.map(() => 'rgba(45,122,58,0.45)');
     const borderColors = historyPrices.map(() => 'rgba(45,122,58,1)');
-    bgColors.push(res.prediction.trend === 'Increase' ? 'rgba(82,192,99,0.9)' : 'rgba(239,68,68,0.9)');
-    borderColors.push(res.prediction.trend === 'Increase' ? 'rgba(82,192,99,1)' : 'rgba(239,68,68,1)');
+    const isUp = res.prediction.trend === 'Increase';
+    bgColors.push(isUp ? 'rgba(82,192,99,0.9)' : 'rgba(239,68,68,0.9)');
+    borderColors.push(isUp ? 'rgba(82,192,99,1)' : 'rgba(239,68,68,1)');
 
     if (currentChart) { currentChart.destroy(); currentChart = null; }
     const ctx = document.getElementById('predictionChart').getContext('2d');
     currentChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels,
-        datasets: [{ label: `Price for ${cropStr} (₹/Qtl)`, data: dataPoints, backgroundColor: bgColors, borderColor: borderColors, borderWidth: 1, borderRadius: 4 }]
+        labels: dateLabels,
+        datasets: [{
+          label: `${cropStr} Price (₹/kg)`,
+          data:  dataPoints,
+          backgroundColor: bgColors,
+          borderColor:     borderColors,
+          borderWidth: 1.5,
+          borderRadius: 5
+        }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => ` ₹${ctx.parsed.y.toFixed(2)} / kg`
+            }
+          }
+        },
         scales: {
-          y: { beginAtZero: false, grid: { color: 'rgba(0,0,0,0.05)' } },
-          x: { grid: { display: false } }
+          y: {
+            beginAtZero: false,
+            grid: { color: 'rgba(0,0,0,0.05)' },
+            ticks: { callback: v => '₹' + v.toFixed(1) }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { maxRotation: 45, font: { size: 10 } }
+          }
         }
       }
     });
+
   } catch (e) {
     loader.style.display = 'none';
     toast('Prediction failed. Make sure the Python model is accessible.', 'red');
     console.error(e);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '📈 Forecast Price'; }
   }
 }
 
@@ -518,8 +611,8 @@ function populateShipments(data) {
 // ── Crop Advice ───────────────────────────────
 function populateAdvice() {
   const season  = advisoryData?.season || 'rabi';
-  const seasons = { kharif: '🌧️ Kharif Season (Jun–Nov)', rabi: '❄️ Rabi Season (Nov–Apr)', zaid: '☀️ Zaid Season (Mar–Jun)' };
-  document.getElementById('season-pill').textContent = seasons[season] || '🗓️ ' + season;
+  const seasons = { kharif: '🌧ï¸ Kharif Season (Jun–Nov)', rabi: 'â„ï¸ Rabi Season (Nov–Apr)', zaid: '☀ï¸ Zaid Season (Mar–Jun)' };
+  document.getElementById('season-pill').textContent = seasons[season] || '🗓ï¸ ' + season;
 
   const advice = advisoryData?.advice || [];
   document.getElementById('advice-grid').innerHTML = advice.length
@@ -531,16 +624,16 @@ function populateAdvice() {
         </div>`).join('')
     : '<div style="padding:10px;color:var(--text-3);font-size:.9rem;grid-column:1/-1;">Complete your farm profile to receive personalized advice.</div>';
 
-  const crop     = farmerData?.regularCrop || 'Rice';
-  const diseases = advisoryData?.diseases || [];
-  document.getElementById('disease-grid').innerHTML = diseases.length
-    ? diseases.map(d => `
-        <div class="disease-card">
-          <div class="dis-name">⚠️ ${d.name}</div>
-          <div class="dis-crop">Affects: ${crop}</div>
-          <div class="dis-tip">💊 ${d.tip}</div>
-        </div>`).join('')
-    : '<div style="padding:10px;color:var(--text-3);font-size:.9rem;">No active disease alerts for your crop at this time.</div>';
+  const crop = farmerData && farmerData.regularCrop ? farmerData.regularCrop : 'Rice';
+  const soil  = farmerData && farmerData.soilType   ? farmerData.soilType   : '';
+  const state = farmerData && farmerData.state       ? farmerData.state      : '';
+
+  // Update disease card crop badge
+  const badge = document.getElementById('disease-crop-badge');
+  if (badge) badge.textContent = crop;
+
+  // Trigger RAG disease alerts (async — updates grid when ready)
+  loadRAGDiseaseAlerts(crop, soil, state);
 }
 
 // ── AI Advisor ────────────────────────────────
@@ -561,7 +654,7 @@ async function askAI() {
     : 'Indian farmer.';
 
   try {
-    const res = await fetch("http://127.0.0.1:5000/ask", {
+    const res = await fetch("http://127.0.0.1:5001/ask", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -576,7 +669,7 @@ async function askAI() {
     resp.innerHTML = '<strong>🤖 Advisor:</strong> ' + (data.response || 'No response');
 
   } catch (error) {
-    resp.innerHTML = '❌ Could not connect to server';
+    resp.innerHTML = 'âŒ Could not connect to server';
     console.error(error);
   } finally {
     btn.disabled = false;
@@ -590,14 +683,14 @@ document.getElementById('ai-q').addEventListener('keydown', e => {
 // ── Profile ───────────────────────────────────
 function populateProfile(f, adv) {
   document.getElementById('pro-name').textContent   = `${f.firstName} ${f.lastName}`;
-  document.getElementById('pro-sub').textContent    = `📱 ${f.mobile} · 📍 ${[f.district, f.state].filter(Boolean).join(', ') || 'India'}`;
-  document.getElementById('pro-avatar').textContent = f.gender === 'Female' ? '👩‍🌾' : '👨‍🌾';
+  document.getElementById('pro-sub').textContent    = `📱 ${f.mobile} Â· ðŸ“ ${[f.district, f.state].filter(Boolean).join(', ') || 'India'}`;
+  document.getElementById('pro-avatar').textContent = f.gender === 'Female' ? '👩â€🌾' : '👨â€🌾';
 
   const total = (f.cows || 0) + (f.goats || 0) + (f.hens || 0);
   document.getElementById('pro-badges').innerHTML = `
     <span class="ph-badge">🌾 ${f.regularCrop || 'Farmer'}</span>
-    <span class="ph-badge">🗺️ ${f.landSize} ${f.landUnit}</span>
-    ${f.hasLivestock ? `<span class="ph-badge">🐄 ${total} Animals</span>` : ''}`;
+    <span class="ph-badge">🗺ï¸ ${f.landSize} ${f.landUnit}</span>
+    ${f.hasLivestock ? `<span class="ph-badge">ðŸ„ ${total} Animals</span>` : ''}`;
 
   document.getElementById('ps-age').textContent    = f.age || '—';
   document.getElementById('ps-roi').textContent    = adv?.roi ? adv.roi + '%' : '—';
@@ -626,7 +719,7 @@ function showPTab(name, btn) {
 function toggleEdit() {
   isEditing = !isEditing;
   document.querySelectorAll('#page-profile input:not(#pf-mob), #page-profile textarea').forEach(el => el.disabled = !isEditing);
-  document.querySelector('.ph-edit-btn').textContent = isEditing ? '✕ Cancel' : '✏️ Edit Profile';
+  document.querySelector('.ph-edit-btn').textContent = isEditing ? '✕ Cancel' : 'âœï¸ Edit Profile';
   document.getElementById('save-bar').classList.toggle('show', isEditing);
 }
 
@@ -634,7 +727,7 @@ function cancelEdit() {
   isEditing = false;
   if (farmerData) populateProfile(farmerData, advisoryData);
   document.querySelectorAll('#page-profile input:not(#pf-mob), #page-profile textarea').forEach(el => el.disabled = true);
-  document.querySelector('.ph-edit-btn').textContent = '✏️ Edit Profile';
+  document.querySelector('.ph-edit-btn').textContent = 'âœï¸ Edit Profile';
   document.getElementById('save-bar').classList.remove('show');
 }
 
@@ -776,3 +869,291 @@ async function acceptRecommendation() {
 
 // ── Init ──────────────────────────────────────
 document.addEventListener('DOMContentLoaded', loadAll);
+
+// ── RAG Advisor (time-gated) ────────────────────────────
+const RAG_API     = 'http://127.0.0.1:5001/crop-advice';
+const DISEASE_API = 'http://127.0.0.1:5001/disease-alerts';
+
+const RAGAdvisor = {
+  currentWeek: 1,
+  totalWeeks:  16,
+  loading:     false,
+
+  // Crop growing duration in weeks (mirrors backend table)
+  CROP_WEEKS: {
+    'rice':16,'wheat':18,'maize':13,'corn':13,'cotton':22,'sugarcane':24,
+    'soybean':15,'soya':15,'mustard':16,'groundnut':18,'onion':17,
+    'tomato':14,'potato':13,'chickpea':16,'moong dal':10,'lentil':14,
+    'barley':16,'millet':12,'sorghum':14,'sunflower':14,
+  },
+
+  getTotalWeeks(crop) {
+    return this.CROP_WEEKS[(crop || '').toLowerCase().trim()] || 16;
+  },
+
+  // ── localStorage time-gate helpers ──────────────────────
+  _storageKey(crop) { return 'ragStart_' + (crop || 'default').toLowerCase().replace(/\s+/g, '_'); },
+
+  getStartDate(crop) {
+    const key = this._storageKey(crop);
+    let stored = localStorage.getItem(key);
+    if (!stored) {
+      stored = new Date().toISOString();
+      localStorage.setItem(key, stored);
+    }
+    return new Date(stored);
+  },
+
+  getCurrentAvailableWeek(crop, totalWeeks) {
+    const startDate   = this.getStartDate(crop);
+    const daysElapsed = Math.floor((Date.now() - startDate.getTime()) / 86400000);
+    return Math.min(Math.floor(daysElapsed / 7) + 1, totalWeeks);
+  },
+
+  getUnlockDate(crop, week) {
+    const d = new Date(this.getStartDate(crop).getTime() + (week - 1) * 7 * 86400000);
+    return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+  },
+
+  getDaysUntilUnlock(crop, week) {
+    const unlockMs = this.getStartDate(crop).getTime() + (week - 1) * 7 * 86400000;
+    return Math.max(0, Math.ceil((unlockMs - Date.now()) / 86400000));
+  },
+
+  // ── Progress bar ─────────────────────────────────────
+  updateProgress(week, totalWeeks, focus) {
+    const pct   = Math.min(100, Math.round((week / totalWeeks) * 100));
+    const bar   = document.getElementById('rag-progress-bar');
+    const label = document.getElementById('rag-progress-label');
+    if (bar)   bar.style.width = pct + '%';
+    if (label) label.textContent = 'Week ' + week + ' of ' + totalWeeks
+      + (focus ? ' \u2014 ' + focus.split(',')[0].trim() : '') + ' (' + pct + '% growing cycle)';
+  },
+
+  // ── Locked week view ──────────────────────────────────
+  showLockedWeek(week, crop, totalWeeks) {
+    const body     = document.getElementById('rag-advice-body');
+    const badge    = document.getElementById('rag-week-badge');
+    const label    = document.getElementById('rag-week-label');
+    const nextBtn  = document.getElementById('rag-next-btn');
+    const prevBtn  = document.getElementById('rag-prev-btn');
+    const unlockDate = this.getUnlockDate(crop, week);
+    const daysLeft   = this.getDaysUntilUnlock(crop, week);
+
+    if (badge) badge.textContent = 'Week ' + week + ' of ' + totalWeeks;
+    if (label) label.textContent = 'Locked';
+    if (prevBtn) prevBtn.disabled = week <= 1;
+    if (nextBtn) nextBtn.disabled = true;
+    this.updateProgress(week - 1, totalWeeks, '');
+
+    if (body) {
+      body.innerHTML = '<div class="rag-locked-card">'
+        + '<div class="rag-lock-icon">\ud83d\udd12</div>'
+        + '<div class="rag-lock-title">Week ' + week + ' advice is not yet available</div>'
+        + '<div class="rag-lock-sub">This week\'s growing guide unlocks on <strong>' + unlockDate + '</strong><br>'
+        + 'Your advisor sends advice every 7 days to match your crop growth.</div>'
+        + '<div class="rag-lock-countdown">' + daysLeft + ' day' + (daysLeft !== 1 ? 's' : '') + ' left</div>'
+        + '</div>';
+    }
+  },
+
+  // ── Harvest complete view ─────────────────────────────
+  showHarvestComplete(crop, totalWeeks) {
+    const body    = document.getElementById('rag-advice-body');
+    const badge   = document.getElementById('rag-week-badge');
+    const label   = document.getElementById('rag-week-label');
+    const nextBtn = document.getElementById('rag-next-btn');
+    const prevBtn = document.getElementById('rag-prev-btn');
+
+    if (badge)   badge.textContent = 'Harvested!';
+    if (label)   label.textContent = 'Growing cycle complete';
+    if (nextBtn) nextBtn.disabled  = true;
+    if (prevBtn) prevBtn.disabled  = false;
+    this.updateProgress(totalWeeks, totalWeeks, 'Harvest complete');
+
+    if (body) {
+      body.innerHTML = '<div class="rag-harvest-complete">'
+        + '<div class="rag-harvest-icon">\ud83c\udf3e</div>'
+        + '<div class="rag-harvest-title">Harvest Time for ' + crop + '!</div>'
+        + '<div class="rag-harvest-sub">'
+        + 'Your ' + crop + ' crop has completed its full ' + totalWeeks + '-week growing cycle.<br>'
+        + 'It is now ready for harvest. Review your Week ' + totalWeeks + ' advice for best practices.<br><br>'
+        + '<strong>Next step:</strong> Update your crop in your profile for the next season!'
+        + '</div></div>';
+    }
+  },
+
+  // ── Parse LLM markdown into styled HTML ─────────────────
+  parseAdviceHTML(text) {
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    let html = '', inList = false;
+    for (const line of lines) {
+      if (/warning|caution|important/i.test(line.slice(0, 20)) || line.startsWith('\u26a0')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += '<div class="rag-warning">' + line + '</div>'; continue;
+      }
+      if (/^[-*\u2022]/.test(line) || /^\d+[.)]\s/.test(line)) {
+        if (!inList) { html += '<ul>'; inList = true; }
+        const c = line.replace(/^[-*\u2022]\s*/, '').replace(/^\d+[.)]\s*/, '');
+        html += '<li>' + c.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') + '</li>'; continue;
+      }
+      if (line.startsWith('##') || (line.startsWith('**') && line.endsWith('**'))) {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += '<p><strong>' + line.replace(/^#+\s*/, '').replace(/\*\*/g, '') + '</strong></p>'; continue;
+      }
+      if (inList) { html += '</ul>'; inList = false; }
+      html += '<p>' + line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') + '</p>';
+    }
+    if (inList) html += '</ul>';
+    return html;
+  },
+
+  // ── Render successful API response ────────────────────────
+  renderAdvice(data, availableWeek) {
+    const body      = document.getElementById('rag-advice-body');
+    const badge     = document.getElementById('rag-week-badge');
+    const label     = document.getElementById('rag-week-label');
+    const sourceTag = document.getElementById('rag-source-tag');
+    const prevBtn   = document.getElementById('rag-prev-btn');
+    const nextBtn   = document.getElementById('rag-next-btn');
+    if (!body) return;
+
+    const total = data.total_weeks || this.totalWeeks;
+    this.totalWeeks = total;
+    if (badge) badge.textContent = 'Week ' + data.week + ' of ' + total;
+    if (label) label.textContent = data.is_final_week ? 'Final Week' : 'Week ' + data.week;
+    this.updateProgress(data.week, total, data.focus);
+
+    if (data.sources && data.sources.length) {
+      if (sourceTag) sourceTag.innerHTML = '\ud83d\udcc4 Sources: ' + data.sources.map(s => '<span>' + s + '</span>').join(' ');
+    } else {
+      if (sourceTag) sourceTag.innerHTML = '\ud83d\udcc4 Source: Agricultural Knowledge Base';
+    }
+
+    body.innerHTML = this.parseAdviceHTML(data.advice || 'No advice available.');
+    if (prevBtn) prevBtn.disabled = data.week <= 1;
+    if (nextBtn) nextBtn.disabled = data.week >= availableWeek || data.week >= total;
+  },
+
+  // ── Main fetch ─────────────────────────────────────────────
+  async fetch(week) {
+    if (this.loading) return;
+
+    const crop        = (farmerData && farmerData.regularCrop) ? farmerData.regularCrop : 'Rice';
+    const total       = this.getTotalWeeks(crop);
+    this.totalWeeks   = total;
+    const available   = this.getCurrentAvailableWeek(crop, total);
+    week              = Math.max(1, Math.min(week, total));
+    this.currentWeek  = week;
+
+    // All weeks done — show harvest card
+    if (available > total) {
+      this.showHarvestComplete(crop, total);
+      return;
+    }
+
+    // Week is in the future — show lock card
+    if (week > available) {
+      this.showLockedWeek(week, crop, total);
+      return;
+    }
+
+    // Fetch from RAG backend
+    this.loading = true;
+    const body = document.getElementById('rag-advice-body');
+    if (body) body.innerHTML = '<div class="rag-loading">Fetching Week ' + week + ' advice from knowledge base...</div>';
+
+    const season = (advisoryData && advisoryData.season) ? advisoryData.season : '';
+    const soil   = (farmerData && farmerData.soilType)   ? farmerData.soilType  : '';
+    const state  = (farmerData && farmerData.state)      ? farmerData.state     : '';
+
+    try {
+      const res  = await fetch(RAG_API, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ crop, week, season, soil, state })
+      });
+      if (!res.ok) throw new Error('Server ' + res.status);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      if (data.total_weeks) this.totalWeeks = data.total_weeks;
+      this.renderAdvice(data, available);
+    } catch (err) {
+      console.error('[RAG] fetch error:', err);
+      const prevBtn = document.getElementById('rag-prev-btn');
+      const nextBtn = document.getElementById('rag-next-btn');
+      if (body) body.innerHTML = '<div class="rag-error">Could not load advice. Make sure the Python server is running:<br><code>python backend/app.py</code><br><small>' + err.message + '</small></div>';
+      if (prevBtn) prevBtn.disabled = week <= 1;
+      if (nextBtn) nextBtn.disabled = true;
+    } finally {
+      this.loading = false;
+    }
+  },
+
+  init() {
+    const crop      = (farmerData && farmerData.regularCrop) ? farmerData.regularCrop : 'Rice';
+    const total     = this.getTotalWeeks(crop);
+    const available = this.getCurrentAvailableWeek(crop, total);
+    this.currentWeek = Math.min(available, total);
+    this.fetch(this.currentWeek);
+  }
+};
+
+// Called by Prev / Next buttons
+function ragChangeWeek(delta) {
+  const crop      = (farmerData && farmerData.regularCrop) ? farmerData.regularCrop : 'Rice';
+  const total     = RAGAdvisor.getTotalWeeks(crop);
+  const available = RAGAdvisor.getCurrentAvailableWeek(crop, total);
+  const next      = RAGAdvisor.currentWeek + delta;
+  if (next < 1) return;
+  // Allow browsing past locked weeks (shows lock card)
+  if (next > total) return;
+  RAGAdvisor.fetch(next);
+}
+
+// ── RAG Disease Alerts ───────────────────────────────────
+async function loadRAGDiseaseAlerts(crop, soil, state) {
+  const grid  = document.getElementById('disease-grid');
+  const badge = document.getElementById('disease-crop-badge');
+  if (!grid) return;
+  if (badge) badge.textContent = crop;
+  grid.innerHTML = '<div style="padding:12px;color:var(--text-3);font-size:.9rem;"><em>Analyzing knowledge base for ' + crop + ' disease risks...</em></div>';
+
+  try {
+    const res = await fetch(DISEASE_API, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ crop, soil, state })
+    });
+    if (!res.ok) throw new Error('Server ' + res.status);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    const diseases = data.diseases || [];
+    if (!diseases.length) {
+      grid.innerHTML = '<div style="padding:12px;color:var(--text-3);font-size:.9rem;">No active disease alerts for ' + crop + ' at this time.</div>';
+      return;
+    }
+    grid.innerHTML = diseases.map(d => '<div class="disease-card">'
+      + '<div class="dis-name">\u26a0\ufe0f ' + (d.name || 'Unknown') + '</div>'
+      + '<div class="dis-crop">Affects: ' + crop + '</div>'
+      + (d.symptoms ? '<div class="dis-tip" style="color:var(--text-2);margin-bottom:5px;">\ud83d\udd0d ' + d.symptoms + '</div>' : '')
+      + '<div class="dis-tip">\ud83d\udc8a ' + (d.tip || 'Consult your local agricultural extension for treatment.') + '</div>'
+      + '</div>').join('');
+  } catch (err) {
+    console.warn('[DISEASE] fetch failed:', err);
+    // Fallback to static advisoryData diseases
+    const diseases = advisoryData && advisoryData.diseases ? advisoryData.diseases : [];
+    grid.innerHTML = diseases.length
+      ? diseases.map(d => '<div class="disease-card"><div class="dis-name">\u26a0\ufe0f ' + d.name + '</div>'
+          + '<div class="dis-crop">Affects: ' + crop + '</div><div class="dis-tip">\ud83d\udc8a ' + d.tip + '</div></div>').join('')
+      : '<div style="padding:12px;color:var(--text-3);font-size:.9rem;">Ensure the Python server is running for live alerts.</div>';
+  }
+}
+
+// ── Patch goPage to auto-init advice tab ─────────────────
+const _origGoPage = goPage;
+goPage = function(name) {
+  _origGoPage(name);
+  if (name === 'advice') setTimeout(() => RAGAdvisor.init(), 150);
+};
+document.querySelectorAll('.nav-item[data-page="advice"]').forEach(el => {
+  el.addEventListener('click', () => setTimeout(() => RAGAdvisor.init(), 200));
+});

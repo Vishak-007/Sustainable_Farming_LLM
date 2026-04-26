@@ -196,6 +196,19 @@ def plot_price_trend(input_data, predicted_price):
 
 # 5. Interactive Usage
 if __name__ == "__main__":
+    # ── Mode 1: Called by Node.js with a temp JSON file ──────────────
+    # Usage: python price_prediction.py --json-file /tmp/predict_xxx.json
+    if len(sys.argv) > 1 and sys.argv[1] == '--json-file':
+        try:
+            with open(sys.argv[2], 'r', encoding='utf-8') as f:
+                input_data = json.load(f)
+            result = predict_price(input_data)
+            print(json.dumps(result))
+        except Exception as e:
+            print(json.dumps({"error": str(e)}))
+        sys.exit(0)
+
+    # ── Mode 2: Legacy inline JSON arg (may break on Windows PowerShell) ──
     if len(sys.argv) > 1 and sys.argv[1] == '--json':
         try:
             input_data = json.loads(sys.argv[2])
